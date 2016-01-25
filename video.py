@@ -56,8 +56,10 @@ logger.info("Loading token list from {0}".format(tokenlist_file))
 tokens = LoadTokenList(tokenlist_file)
 logger.info("Loaded {0} tokens".format( len( tokens ) ) )
 
-text_object = DrawText("demo text", 500, 1500)
+text_object = DrawText("demo text that is getting quite long now", 500, 1500)
+text_object.fix_bounds = True
 text_object.font.file = "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-C.ttf"
+text_object.font.size = 40
 text_object.box.enabled = True
 text_object.box.colour = "FF00AA00"
 text_object.box.border_width = 30

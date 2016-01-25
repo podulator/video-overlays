@@ -13,7 +13,7 @@ class DrawText(Renderable):
         
         bounds = ""
         if (self.fix_bounds):
-            bounds = ": fix_bounds=true"
+            bounds = ": fix_bounds=1"
 
         main = "text='{0}': x={1}: y={2}: alpha={3}{4}{5}".format(   
                                                                        self.content, 
@@ -22,7 +22,7 @@ class DrawText(Renderable):
                                                                        self.alpha, 
                                                                        border, 
                                                                        bounds)
-    
+
         return "{0}=\"{1}{2}{3}{4}{5}\"".format(
                                         self.object_type, 
                                         main, 

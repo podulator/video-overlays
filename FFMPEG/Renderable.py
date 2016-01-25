@@ -1,5 +1,5 @@
 
-class Renderable:
+class Renderable(object):
     """The basic FFMPEG drawable class"""
 
     def object_type(self):

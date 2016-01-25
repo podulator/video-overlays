@@ -6,15 +6,42 @@ from Shadow import Shadow
 class DrawText(Renderable):
 
     def render(self):
-        return "{0}=\"text={1}: x={2}: y={3}: alpha={4}{5}{6}{7}{8}\"".format(self.object_type, 
+        
+        border = ""
+        if (self.border_width > 0):
+            border = ": borderw={0}: bordercolor={1}".format(self.border_width, self.border_colour)
+        
+        bounds = ""
+        if (self.fix_bounds):
+            bounds = ": fix_bounds=true"
+
+        main = "text='{0}': x={1}: y={2}: alpha={3}{4}{5}".format(   
                                                                        self.content, 
                                                                        self.x, 
                                                                        self.y, 
                                                                        self.alpha, 
-                                                                       str(self._font), 
-                                                                       str(self._shadow), 
-                                                                       str(self._box), 
-                                                                       self.enabled())
+                                                                       border, 
+                                                                       bounds)
+    
+        return "{0}=\"{1}{2}{3}{4}{5}\"".format(
+                                        self.object_type, 
+                                        main, 
+                                        str(self._font), 
+                                        str(self._shadow), 
+                                        str(self._box), 
+                                        self.enabled())
+
+    @property
+    def font(self):
+        return self._font
+    
+    @property
+    def box(self):
+        return self._box
+    
+    @property
+    def drop_shadow(self):
+        return self._shadow
 
     def __init__(self, text, frame_from, frame_to):
         

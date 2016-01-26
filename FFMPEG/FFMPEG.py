@@ -9,16 +9,25 @@ class FFMPEG(object):
 
     FFMPEG_PATH = "/usr/bin/ffmpeg"
 
+    @property
+    def text_objects(self):
+        return self._text_objects
+    
+    @property
+    def image_objects(self):
+        return self._image_objects
+
     def render(self):
         
-        objects = join(" \\\n", self._text_objects)
-        payload = "{0} -y i \"{1}\" \\\n-strict -2 \\\n-vf \\\n{2}{3}".format(FFMPEG_PATH, self._source_movie, objects, self._destination_movie)
+        all_objects = self._text_objects + self._image_objects
+        all_objects = ",\\\n".join( map( str, self._text_objects ) )
+        payload = "{0} -y -i \"{1}\" \\\n-strict -2 \\\n-vf \\\n{2} \\\n\"{3}\"".format(self.FFMPEG_PATH, self._source_movie, all_objects, self._destination_movie)
         return payload
 
     def to_JSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
-    def __init__(source, destination):
+    def __init__(self, source, destination):
         
         self._source_movie = source
         self._destination_movie = destination

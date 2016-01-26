@@ -3,8 +3,25 @@ from Box import Box
 from Font import Font
 from Shadow import Shadow
 import json
+import re
+from BeautifulSoup import BeautifulSoup
+from BeautifulSoup import BeautifulStoneSoup
 
 class DrawText(Renderable):
+
+    def fix_content_length(self):
+        return (self._content[:self._content_max_length - 3] + '...') if len(self._content) > self._content_max_length else self._content
+
+    def scrub(self, content):
+        content = BeautifulSoup(content).getText()
+        content = unicode(BeautifulStoneSoup(content, convertEntities=BeautifulStoneSoup.HTML_ENTITIES))
+        content = content.encode("utf-8")
+        content = re.sub('%', '\\\\\\\\\\%', content)
+        content = re.sub('{', '\\{', content)
+        content = re.sub('}', '\\}', content)
+        content = re.sub(':', '\\:', content)
+        
+        return content
 
     def render(self):
         
@@ -34,10 +51,18 @@ class DrawText(Renderable):
 
     @property
     def content(self):
+        
+        if (self._content_dirty and self._clean_content):
+            self._content = self.scrub(self._content)
+        if (self._content_dirty and self._content_max_length > len(self._content)):
+            self._content = self.fix_contentlength()
+        
+        self._content_dirty = False
         return self._content
     
     @content.setter
     def content(self, content):
+        self._content_dirty = True
         self._content = content
 
     @property
@@ -123,17 +148,18 @@ class DrawText(Renderable):
         
         Renderable.__init__(self, "drawtext", frame_from, frame_to)
 
-        self._content = text
-        self._clean_content = False
-        self._content_max_length = 0
+        self.content_dirty = False
+        self.content = text
+        self.clean_content = False
+        self.content_max_length = 0
         
         # origin is top left
-        self._x = 0
-        self._y = 0
-        self._alpha = 1.0
-        self._border_width = 0
-        self._border_colour = "black"
-        self._fix_bounds = False;
+        self.x = 0
+        self.y = 0
+        self.alpha = 1.0
+        self.border_width = 0
+        self.border_colour = "black"
+        self.fix_bounds = False;
         
         self._font = Font()
         self._box = Box()

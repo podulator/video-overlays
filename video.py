@@ -64,7 +64,7 @@ text_object.box.enabled = True
 text_object.box.colour = "FF00AA00"
 text_object.box.border_width = 30
 
-print text_object
+print text_object.to_JSON()
 
 
 #data_file = 'PageReportV2.csv'

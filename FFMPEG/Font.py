@@ -1,3 +1,4 @@
+import json
 
 class Font(object):
 
@@ -34,6 +35,9 @@ class Font(object):
     @colour.setter
     def colour(self, colour):
         self._colour = colour
+
+    def to_JSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def __init__(self):
         self._family = "Sans"

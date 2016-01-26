@@ -1,3 +1,4 @@
+import json
 
 class Shadow(object):
 
@@ -24,6 +25,9 @@ class Shadow(object):
     @y.setter
     def set_y(self, y):
         self._y = y
+
+    def to_JSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def __init__(self):
         self._colour = "black"

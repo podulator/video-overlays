@@ -1,4 +1,5 @@
-        
+import json
+
 class Box(object):
 
     @property
@@ -32,6 +33,9 @@ class Box(object):
     @opacity.setter
     def opacity(self, opacity):
         self._opacity = opacity
+
+    def to_JSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def __init__(self):
         self._enabled = False

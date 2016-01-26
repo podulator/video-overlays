@@ -33,6 +33,78 @@ class DrawText(Renderable):
                                         self.enabled())
 
     @property
+    def content(self):
+        return self._content
+    
+    @content.setter
+    def content(self, content):
+        self._content = content
+
+    @property
+    def clean_content(self):
+        return self._clean_content
+    
+    @clean_content.setter
+    def clean_content(self, value):
+        self._clean_content = bool(value)
+    
+    @property
+    def content_max_length(self):
+        return self._content_max_length
+    
+    @content_max_length.setter
+    def content_max_length(self, length):
+        self._content_max_length = length
+
+    @property
+    def x(self):
+        return self._x
+    
+    @x.setter
+    def x(self, x):
+        self._x = x
+    
+    @property
+    def y(self):
+        return self._y
+    
+    @y.setter
+    def y(self, y):
+        self._y = y
+    
+    @property
+    def alpha(self):
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, alpha):
+        self._alpha = alpha
+        
+    @property
+    def border_width(self):
+        return self._border_width
+    
+    @border_width.setter
+    def border_width(self, width):
+        self._border_width = width
+        
+    @property
+    def border_colour(self):
+        return self._border_colour
+    
+    @border_colour.setter
+    def border_colour(self, colour):
+        self._border_colour = colour
+    
+    @property
+    def fix_bounds(self):
+        return self._fix_bounds
+    
+    @fix_bounds.setter
+    def fix_bounds(self, value):
+        self._fix_bounds = value
+
+    @property
     def font(self):
         return self._font
     
@@ -51,14 +123,17 @@ class DrawText(Renderable):
         
         Renderable.__init__(self, "drawtext", frame_from, frame_to)
 
-        self.content = text
+        self._content = text
+        self._clean_content = False
+        self._content_max_length = 0
+        
         # origin is top left
-        self.x = 0
-        self.y = 0
-        self.alpha = 1.0
-        self.border_width = 0
-        self.border_colour = "black"
-        self.fix_bounds = False;
+        self._x = 0
+        self._y = 0
+        self._alpha = 1.0
+        self._border_width = 0
+        self._border_colour = "black"
+        self._fix_bounds = False;
         
         self._font = Font()
         self._box = Box()

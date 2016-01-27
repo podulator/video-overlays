@@ -2,50 +2,56 @@ import json
 
 class Font(object):
 
-    @property
-    def file(self):
-        return self._file
+	@property
+	def file(self):
+		return self._file
 
-    @file.setter
-    def file(self, filename):
-        self._file = filename
-        self._family = None
+	@file.setter
+	def file(self, value):
+		self._file = value
+		self._family = None
 
-    @property
-    def family(self):
-        return self._family
+	@property
+	def family(self):
+		return self._family
 
-    @family.setter
-    def family(self, family):
-        self._family = family
-        self._file = None
+	@family.setter
+	def family(self, value):
+		self._family = value
+		self._file = None
 
-    @property
-    def size(self):
-        return self._size
+	@property
+	def size(self):
+		return self._size
 
-    @size.setter
-    def size(self, size):
-        self._size = size
-    
-    @property
-    def colour(self):
-        return self._colour
-    
-    @colour.setter
-    def colour(self, colour):
-        self._colour = colour
+	@size.setter
+	def size(self, value):
+		self._size = value
+	
+	@property
+	def colour(self):
+		return self._colour
+	
+	@colour.setter
+	def colour(self, value):
+		self._colour = value
 
-    def to_JSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+	def to_JSON(self):
+		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
-    def __init__(self):
-        self._family = "Sans"
-        self._file = None
-        self._size = 16
-        self._colour = "black"
+	def from_JSON(self, data):
+		self.family = data["_family"]
+		self.file = data["_file"]
+		self.size = data["_size"]
+		self.colour = data["_colour"]
 
-    def __str__(self):
-        if (None == self._file):
-            return ": font=\"{0}\": fontsize={1}: fontcolor={2}".format(self._family, self._size, self._colour)
-        return ": fontfile=\"{0}\": fontsize={1}: fontcolor={2}".format(self._file, self._size, self._colour)
+	def __init__(self):
+		self._family = "Sans"
+		self._file = None
+		self._size = 16
+		self._colour = "black"
+
+	def __str__(self):
+		if (None == self._file):
+			return ": font=\"{0}\": fontsize={1}: fontcolor={2}".format(self._family, self._size, self._colour)
+		return ": fontfile=\"{0}\": fontsize={1}: fontcolor={2}".format(self._file, self._size, self._colour)

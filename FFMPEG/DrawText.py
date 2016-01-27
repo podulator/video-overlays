@@ -61,9 +61,9 @@ class DrawText(Renderable):
 		return self._content
 	
 	@content.setter
-	def content(self, content):
+	def content(self, value):
 		self._content_dirty = True
-		self._content = content
+		self._content = value
 
 	@property
 	def clean_content(self):
@@ -78,48 +78,48 @@ class DrawText(Renderable):
 		return self._content_max_length
 	
 	@content_max_length.setter
-	def content_max_length(self, length):
-		self._content_max_length = length
+	def content_max_length(self, value):
+		self._content_max_length = value
 
 	@property
 	def x(self):
 		return self._x
 	
 	@x.setter
-	def x(self, x):
-		self._x = x
+	def x(self, value):
+		self._x = value
 	
 	@property
 	def y(self):
 		return self._y
 	
 	@y.setter
-	def y(self, y):
-		self._y = y
+	def y(self, value):
+		self._y = value
 	
 	@property
 	def alpha(self):
 		return self._alpha
 
 	@alpha.setter
-	def alpha(self, alpha):
-		self._alpha = alpha
+	def alpha(self, value):
+		self._alpha = value
 		
 	@property
 	def border_width(self):
 		return self._border_width
 	
 	@border_width.setter
-	def border_width(self, width):
-		self._border_width = width
+	def border_width(self, value):
+		self._border_width = value
 		
 	@property
 	def border_colour(self):
 		return self._border_colour
 	
 	@border_colour.setter
-	def border_colour(self, colour):
-		self._border_colour = colour
+	def border_colour(self, value):
+		self._border_colour = value
 	
 	@property
 	def fix_bounds(self):

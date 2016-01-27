@@ -1,0 +1,73 @@
+{
+    "_destination_movie": "outmovie.webm", 
+    "_image_objects": [], 
+    "_source_movie": "brand_film.mp4", 
+    "_text_objects": [
+        {
+            "_alpha": 1.0, 
+            "_border_colour": "black", 
+            "_border_width": 0, 
+            "_box": {
+                "_border_width": 30, 
+                "_colour": "FF00AA00", 
+                "_enabled": true, 
+                "_opacity": 1.0
+            }, 
+            "_clean_content": true, 
+            "_content": "second [escaped] {demo} %text% that is getting quite long :: now and needs for a test", 
+            "_content_dirty": true, 
+            "_content_max_length": 0, 
+            "_fix_bounds": true, 
+            "_font": {
+                "_colour": "black", 
+                "_family": null, 
+                "_file": "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-C.ttf", 
+                "_size": 40
+            }, 
+            "_shadow": {
+                "_colour": "blue", 
+                "_x": 0, 
+                "_y": 0
+            }, 
+            "_x": 0, 
+            "_y": 0, 
+            "_content_dirty": false, 
+            "_frame_from": 200, 
+            "_frame_to": 600, 
+            "_object_type": "drawtext"
+        }, 
+        {
+            "_alpha": 1.0, 
+            "_border_colour": "black", 
+            "_border_width": 0, 
+            "_box": {
+                "_border_width": 30, 
+                "_colour": "0000AA99", 
+                "_enabled": true, 
+                "_opacity": 1.0
+            }, 
+            "_clean_content": false, 
+            "_content": "demo text that is getting quite long now", 
+            "_content_dirty": true, 
+            "_content_max_length": 0, 
+            "_fix_bounds": true, 
+            "_font": {
+                "_colour": "black", 
+                "_family": null, 
+                "_file": "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-C.ttf", 
+                "_size": 40
+            }, 
+            "_shadow": {
+                "_colour": "green", 
+                "_x": 0, 
+                "_y": 0
+            }, 
+            "_x": 0, 
+            "_y": 0, 
+            "_content_dirty": false, 
+            "_frame_from": 500, 
+            "_frame_to": 1500, 
+            "_object_type": "drawtext"
+        }
+    ]
+}

@@ -27,6 +27,22 @@ class FFMPEG(object):
 		self._destination_movie = value
 
 	@property
+	def snapshot_timestamp(self):
+		return self._snapshot_timestamp
+	
+	@snapshot_timestamp.setter
+	def snapshot_timestamp(self, value):
+		self._snapshot_timestamp = value
+
+	@property
+	def snapshot_name(self):
+		return self._snapshot_name
+	
+	@snapshot_name.setter
+	def snapshot_name(self, value):
+		self._snapshot_name = value
+
+	@property
 	def text_objects(self):
 		return self._text_objects
 	
@@ -39,6 +55,11 @@ class FFMPEG(object):
 		all_objects = self._text_objects + self._image_objects
 		all_objects = ",\\\n".join( map( str, self._text_objects ) )
 		payload = "{0} -y -i \"{1}\" \\\n-strict -2 \\\n-vf \\\n{2} \\\n\"{3}\"".format(self.FFMPEG_PATH, self._source_movie, all_objects, self._destination_movie)
+		
+		if (self.snapshot_name != "" and self.snapshot_timestamp != ""):
+			snapshot = "\n{0} -y -i {1} -ss {2} -vframes 1 {3}".format(self.FFMPEG_PATH, self._destination_movie, self.snapshot_timestamp, self.snapshot_name)
+			payload += snapshot
+
 		return payload
 
 	def to_JSON(self):
@@ -48,6 +69,9 @@ class FFMPEG(object):
 
 		self.source_movie = data["_source_movie"]
 		self.destination_movie = data["_destination_movie"]
+		self.snapshot_timestamp = data["_snapshot_timestamp"]
+		self._snapshot_name = data["_snapshot_name"]
+
 		for text_object in data["_text_objects"]:
 			drawtext = DrawText()
 			drawtext.from_JSON(text_object)
@@ -61,6 +85,9 @@ class FFMPEG(object):
 		
 		self._source_movie = source
 		self._destination_movie = destination
+		self._snapshot_timestamp = ""
+		self._snapshot_name = ""
+
 		self._text_objects = []
 		self._image_objects = []
 

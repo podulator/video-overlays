@@ -4,10 +4,15 @@ from Font import Font
 from Shadow import Shadow
 import json
 import re
+import textwrap
 from BeautifulSoup import BeautifulSoup
 from BeautifulSoup import BeautifulStoneSoup
 
 class DrawText(Renderable):
+
+	def fix_line_length(self):
+
+		return '\n'.join(textwrap.wrap(self._content, self._line_max_length))
 
 	def fix_content_length(self):
 		return (self._content[:self._content_max_length - 3] + '...') if len(self._content) > self._content_max_length else self._content
@@ -24,7 +29,7 @@ class DrawText(Renderable):
 		return content
 
 	def render(self):
-		
+
 		border = ""
 		if (self.border_width > 0):
 			border = ": borderw={0}: bordercolor={1}".format(self.border_width, self.border_colour)
@@ -44,19 +49,21 @@ class DrawText(Renderable):
 		return "{0}=\"{1}{2}{3}{4}{5}\"".format(
 										self.object_type, 
 										main, 
-										str(self._font), 
-										str(self._shadow), 
-										str(self._box), 
+										str(self.font), 
+										str(self.drop_shadow), 
+										str(self.box), 
 										self.enabled())
 
 	@property
 	def content(self):
-		
-		if (self._content_dirty and self._clean_content):
-			self._content = self.scrub(self._content)
-		if (self._content_dirty and self._content_max_length > len(self._content)):
-			self._content = self.fix_contentlength()
-		
+		if (self._content_dirty):
+			if (self._clean_content):
+				self._content = self.scrub(self._content)
+			if (self._content_max_length > len(self._content)):
+				self._content = self.fix_contentlength()
+			if (self._line_max_length > 0):
+				self._content = self.fix_line_length()
+
 		self._content_dirty = False
 		return self._content
 	
@@ -80,6 +87,14 @@ class DrawText(Renderable):
 	@content_max_length.setter
 	def content_max_length(self, value):
 		self._content_max_length = value
+
+	@property
+	def line_max_length(self):
+		return self._line_max_length
+	
+	@line_max_length.setter
+	def line_max_length(self, value):
+		self._line_max_length = value
 
 	@property
 	def x(self):
@@ -139,7 +154,7 @@ class DrawText(Renderable):
 	
 	@property
 	def drop_shadow(self):
-		return self._shadow
+		return self._drop_shadow
 
 	def to_JSON(self):
 		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
@@ -149,7 +164,8 @@ class DrawText(Renderable):
 		self.content = data["_content"]
 		self.clean_content = data["_clean_content"]
 		self.content_max_length = data["_content_max_length"]
-		
+		self.line_max_length = data["_line_max_length"]
+
 		self.frame_from = data["_frame_from"]
 		self.frame_to = data["_frame_to"]
 		
@@ -162,7 +178,7 @@ class DrawText(Renderable):
 
 		self._box.from_JSON(data["_box"])
 		self._font.from_JSON(data["_font"])
-		self._shadow.from_JSON(data["_shadow"])
+		self._drop_shadow.from_JSON(data["_drop_shadow"])
 
 	def __init__(self, text = "", frame_from = 0, frame_to = 0):
 		
@@ -172,7 +188,8 @@ class DrawText(Renderable):
 		self.content = text
 		self.clean_content = False
 		self.content_max_length = 0
-		
+		self.line_max_length = 0
+
 		# origin is top left
 		self.x = 0
 		self.y = 0
@@ -183,7 +200,7 @@ class DrawText(Renderable):
 		
 		self._font = Font()
 		self._box = Box()
-		self._shadow = Shadow()
+		self._drop_shadow = Shadow()
 
 	def __str__(self):
 		return self.render()

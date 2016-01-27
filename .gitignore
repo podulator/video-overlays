@@ -1,6 +1,7 @@
 # ignore the movie binaries
 *.mp4
 *.mov
+*.webm
 # ignore the fonts
 *.ttf
 *ttf

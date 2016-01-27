@@ -19,6 +19,7 @@
             "_content_max_length": 0, 
             "_fix_bounds": true, 
             "_font": {
+				"_alpha": "0.2", 
                 "_colour": "black", 
                 "_family": null, 
                 "_file": "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-C.ttf", 
@@ -52,6 +53,7 @@
             "_content_max_length": 0, 
             "_fix_bounds": true, 
             "_font": {
+				"_alpha": "6.2", 
                 "_colour": "black", 
                 "_family": null, 
                 "_file": "/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-C.ttf", 

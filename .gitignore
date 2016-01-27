@@ -1,5 +1,8 @@
+# ignore the movie binaries
 *.mp4
 *.mov
+# ignore the fonts
 *.ttf
 *ttf
+# ignore the compiled python binaries
 *.pyc

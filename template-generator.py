@@ -32,6 +32,8 @@ setDebugLevel(debugLevel)
 
 font = "{0}/roboto_ttf/Roboto-Black.ttf".format(os.getcwd())
 movie = FFMPEG("JG 008 Animatic with TEXTLESS.mp4", "outmovie.webm")
+movie.snapshot_timestamp = "00:00:03.123"
+movie.snapshot_name = "snapshot.png"
 
 first_name_object = DrawText("%FIRST_NAME%", 0, 97)
 first_name_object.line_max_length = 50

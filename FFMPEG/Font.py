@@ -36,6 +36,14 @@ class Font(object):
 	def colour(self, value):
 		self._colour = value
 
+	@property
+	def alpha(self):
+		return self._alpha
+	
+	@alpha.setter
+	def alpha(self, value):
+		self._alpha = value
+
 	def to_JSON(self):
 		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
@@ -44,14 +52,16 @@ class Font(object):
 		self.file = data["_file"]
 		self.size = data["_size"]
 		self.colour = data["_colour"]
+		self.alpha = data["_alpha"]
 
 	def __init__(self):
 		self._family = "Sans"
 		self._file = None
 		self._size = 16
 		self._colour = "black"
+		self._alpha = 1.0
 
 	def __str__(self):
 		if (None == self._file):
-			return ": font=\"{0}\": fontsize={1}: fontcolor={2}".format(self._family, self._size, self._colour)
-		return ": fontfile=\"{0}\": fontsize={1}: fontcolor={2}".format(self._file, self._size, self._colour)
+			return ": font=\"{0}\": fontsize={1}: fontcolor={2}@{3}".format(self._family, self._size, self._colour, self._alpha)
+		return ": fontfile=\"{0}\": fontsize={1}: fontcolor={2}@{3}".format(self._file, self._size, self._colour, self._alpha)

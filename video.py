@@ -43,12 +43,13 @@ def CsvDataIterator(data_file):
         for row in reader:
             yield row
 
-
+'''
 tokenlist_file = 'data.definition'
 logger.info("Loading token list from {0}".format(tokenlist_file))
 tokens = LoadTokenList(tokenlist_file)
 logger.info("Loaded {0} tokens".format( len( tokens ) ) )
-
+'''
+'''
 movie = FFMPEG("brand_film.mp4", "outmovie.webm")
 
 text_object = DrawText("demo text that is getting quite long now", 500, 1500)
@@ -71,8 +72,14 @@ text_object2.clean_content = True
 movie.text_objects.append(text_object2)
 movie.text_objects.append(text_object)
 
-print movie.to_JSON()
-print movie
+'''
+import json
+with open('template.json', 'r') as myfile:
+	template = json.loads(myfile.read())
+	movie = FFMPEG()
+	movie.from_JSON(template)
+	print movie.to_JSON()
+	print movie
 
 
 #data_file = 'PageReportV2.csv'

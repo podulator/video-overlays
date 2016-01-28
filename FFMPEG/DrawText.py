@@ -60,7 +60,7 @@ class DrawText(Renderable):
 			if (self._clean_content):
 				self._content = self.scrub(self._content)
 			if (self._content_max_length < len(self._content)):
-				self._content = self.fix_contentlength()
+				self._content = self.fix_content_length()
 			if (self._line_max_length > 0):
 				self._content = self.fix_line_length()
 

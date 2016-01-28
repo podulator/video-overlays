@@ -25,10 +25,24 @@ class DrawText(Renderable):
 		content = re.sub('}', '\\}', content)
 		content = re.sub(':', '\\:', content)
 		content = re.sub('!', '\\!', content)
-
+		content = re.sub('\'', '', content)
+		
 		return content
 
 	def render(self):
+
+		if (self._content_dirty):
+			if (self._clean_content):
+				self._content = self.scrub(self._content)
+				#print "content cleaned to {0}".format(self._content)
+			if (self._content_max_length > 0 and self._content_max_length < len(self._content)):
+				self._content = self.fix_content_length()
+				#print "content shortened to {0} because longer than {1}".format(self._content, self._content_max_length)
+			if (self._line_max_length > 0 and self._line_max_length < len(self._content)):
+				self._content = self.fix_line_length()
+				#print "content split to {0} because lines longer than {1}".format(self._content, self._line_max_length)
+
+		self._content_dirty = False
 
 		border = ""
 		if (self.border_width > 0):
@@ -56,15 +70,20 @@ class DrawText(Renderable):
 
 	@property
 	def content(self):
+		'''
 		if (self._content_dirty):
 			if (self._clean_content):
 				self._content = self.scrub(self._content)
-			if (self._content_max_length < len(self._content)):
+				#print "content cleaned to {0}".format(self._content)
+			if (self._content_max_length > 0 and self._content_max_length < len(self._content)):
 				self._content = self.fix_content_length()
-			if (self._line_max_length > 0):
+				#print "content shortened to {0} because longer than {1}".format(self._content, self._content_max_length)
+			if (self._line_max_length > 0 and self._line_max_length < len(self._content)):
 				self._content = self.fix_line_length()
+				#print "content split to {0} because lines longer than {1}".format(self._content, self._line_max_length)
 
 		self._content_dirty = False
+		'''
 		return self._content
 	
 	@content.setter

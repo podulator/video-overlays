@@ -7,3 +7,5 @@
 *ttf
 # ignore the compiled python binaries
 *.pyc
+# backup files
+*.bak

@@ -1,5 +1,5 @@
 {
-    "_destination_movie": "outmovie.webm", 
+    "_destination_movie": "outmovie.mp4", 
     "_image_objects": [], 
     "_snapshot_name": "snapshot.png", 
     "_snapshot_timestamp": "00:00:03.123", 
@@ -16,21 +16,21 @@
                 "_opacity": 1.0
             }, 
             "_clean_content": true, 
-            "_content": "%FIRST_NAME%", 
+            "_content": " FIRST NAME is MAT", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
-                "_colour": "black", 
-                "_x": 0, 
-                "_y": 0
+                "_colour": "silver", 
+                "_x": 3, 
+                "_y": 3
             }, 
             "_fix_bounds": true, 
             "_font": {
                 "_alpha": 1.0, 
                 "_colour": "black", 
                 "_family": null, 
-                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Black.ttf", 
-                "_size": 80
+                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Light.ttf", 
+                "_size": 100
             }, 
             "_frame_from": 0, 
             "_frame_to": 97, 
@@ -41,8 +41,8 @@
         }, 
         {
             "_alpha": 1.0, 
-            "_border_colour": "black", 
-            "_border_width": 0, 
+            "_border_colour": "white", 
+            "_border_width": 3, 
             "_box": {
                 "_border_width": 3, 
                 "_colour": "FF00AA00", 
@@ -50,7 +50,7 @@
                 "_opacity": 1.0
             }, 
             "_clean_content": true, 
-            "_content": "%CHARITY_NAME%", 
+            "_content": "CHARITY NAME is CRUK", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -63,8 +63,8 @@
                 "_alpha": 1.0, 
                 "_colour": "black", 
                 "_family": null, 
-                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Black.ttf", 
-                "_size": 80
+                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Light.ttf", 
+                "_size": 100
             }, 
             "_frame_from": 265, 
             "_frame_to": 348, 
@@ -84,7 +84,7 @@
                 "_opacity": 1.0
             }, 
             "_clean_content": true, 
-            "_content": "%DONOR_MESSAGE_1%", 
+            "_content": "DONOR MESSAGE 1 says stuff IN CAPS and small, with some 'punctuation'", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -97,12 +97,12 @@
                 "_alpha": 1.0, 
                 "_colour": "black", 
                 "_family": null, 
-                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Black.ttf", 
-                "_size": 80
+                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Light.ttf", 
+                "_size": 100
             }, 
             "_frame_from": 453, 
             "_frame_to": 685, 
-            "_line_max_length": 30, 
+            "_line_max_length": 17, 
             "_object_type": "drawtext", 
             "_x": 0, 
             "_y": 0
@@ -113,30 +113,30 @@
             "_border_width": 0, 
             "_box": {
                 "_border_width": 3, 
-                "_colour": "FF00AA00", 
-                "_enabled": false, 
-                "_opacity": 1.0
+                "_colour": "red", 
+                "_enabled": true, 
+                "_opacity": 0.5
             }, 
             "_clean_content": true, 
-            "_content": "%DONOR_MESSAGE_2%", 
+            "_content": "DONOR MESSAGE 2 is drop shadowed !! in a semi-opaque red box", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
-                "_colour": "black", 
-                "_x": 0, 
-                "_y": 0
+                "_colour": "silver", 
+                "_x": 3, 
+                "_y": 2
             }, 
             "_fix_bounds": true, 
             "_font": {
                 "_alpha": 1.0, 
                 "_colour": "black", 
                 "_family": null, 
-                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Black.ttf", 
-                "_size": 80
+                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Light.ttf", 
+                "_size": 100
             }, 
             "_frame_from": 453, 
             "_frame_to": 685, 
-            "_line_max_length": 30, 
+            "_line_max_length": 17, 
             "_object_type": "drawtext", 
             "_x": 948, 
             "_y": 557
@@ -152,7 +152,7 @@
                 "_opacity": 1.0
             }, 
             "_clean_content": true, 
-            "_content": "%DONOR_MESSAGE_3%", 
+            "_content": "DONOR MESSAGE 3 is a generic motivational one", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -165,12 +165,12 @@
                 "_alpha": 1.0, 
                 "_colour": "black", 
                 "_family": null, 
-                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Black.ttf", 
-                "_size": 80
+                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Light.ttf", 
+                "_size": 100
             }, 
             "_frame_from": 819, 
             "_frame_to": 1052, 
-            "_line_max_length": 30, 
+            "_line_max_length": 17, 
             "_object_type": "drawtext", 
             "_x": 0, 
             "_y": 0
@@ -186,9 +186,9 @@
                 "_opacity": 1.0
             }, 
             "_clean_content": true, 
-            "_content": "%DONOR_MESSAGE_4%", 
+            "_content": "DONOR MESSAGE 4 is truncated to 70 chars from a really really really really really really looooooooooooong one!!!!!", 
             "_content_dirty": true, 
-            "_content_max_length": 0, 
+            "_content_max_length": 70, 
             "_drop_shadow": {
                 "_colour": "black", 
                 "_x": 0, 
@@ -199,12 +199,12 @@
                 "_alpha": 1.0, 
                 "_colour": "black", 
                 "_family": null, 
-                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Black.ttf", 
-                "_size": 80
+                "_file": "/home/mat/code/repos/video-overlays/roboto_ttf/Roboto-Light.ttf", 
+                "_size": 100
             }, 
             "_frame_from": 819, 
             "_frame_to": 1052, 
-            "_line_max_length": 30, 
+            "_line_max_length": 17, 
             "_object_type": "drawtext", 
             "_x": 948, 
             "_y": 557

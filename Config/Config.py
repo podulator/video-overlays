@@ -59,6 +59,14 @@ class Config(object):
 		self._max_rows = value
 
 	@property
+	def s3_destination(self):
+		return _s3_destination
+	
+	@s3_destination.setter
+	def s3_destination(self, value):
+		self._s3_destination = value
+
+	@property
 	def terminate_on_completion(self):
 		return self._terminate_on_completion
 	
@@ -77,6 +85,7 @@ class Config(object):
 		self._data_seperator = data["_data_seperator"]
 		self._data_has_headers = data["_data_has_headers"]
 		self._max_rows = data["_max_rows"]
+		self._s3_destination = data["_s3_destination"]
 		self._terminate_on_completion = data["_terminate_on_completion"]
 
 	def __init__(self):
@@ -87,6 +96,7 @@ class Config(object):
 		self._data_seperator = ","
 		self._data_has_headers = False
 		self._max_rows = 0
+		self._s3_destination = ""
 		self._terminate_on_completion = False
 
 

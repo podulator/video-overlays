@@ -19,6 +19,14 @@ class Config(object):
 		self._create_movie = value
 
 	@property
+	def create_snapshot(self):
+		return self._create_snapshot
+	
+	@create_snapshot.setter
+	def create_snapshot(self, value):
+		self._create_snapshot = value
+
+	@property
 	def data_file(self):
 		return self._data_file
 	
@@ -64,6 +72,7 @@ class Config(object):
 	def from_JSON(self, data):
 		self._create_html = data["_create_html"]
 		self._create_movie = data["_create_movie"]
+		self._create_snapshot = data["_create_snapshot"]
 		self._data_file = data["_data_file"]
 		self._data_seperator = data["_data_seperator"]
 		self._data_has_headers = data["_data_has_headers"]
@@ -73,6 +82,7 @@ class Config(object):
 	def __init__(self):
 		self._create_html = True
 		self._create_movie = True
+		self._create_snapshot = True
 		self._data_file = ""
 		self._data_seperator = ","
 		self._data_has_headers = False

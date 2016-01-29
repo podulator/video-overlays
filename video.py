@@ -123,6 +123,10 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			# run the command
 			#print this_script
 
+			# do a snapshot?
+			if (config.create_snapshot):
+				logger.info("Creating snapshot")
+
 		if (config.create_html):
 			logger.info("Creating html")
 

@@ -9,7 +9,8 @@ from boto.s3.connection import S3Connection
 import logging
 import sys
 import os
-
+import json
+import re
 from FFMPEG import DrawText
 from FFMPEG import FFMPEG
 
@@ -50,8 +51,9 @@ tokenlist_file = 'data.definition'
 template_file = 'template.json.bak'
 skip_headers = True
 max_rows = 5
+cwd = os.getcwd()
+CWD_TOKEN = "%_CWD_%"
 
-import json
 logger.info("Loading json template from {0}".format(template_file))
 with open(template_file, 'r') as myfile:
 	template = json.loads(myfile.read().strip())
@@ -60,8 +62,6 @@ logger.info("Loaded json template")
 logger.info("Loading token list from {0}".format(tokenlist_file))
 tokens = LoadTokenList(tokenlist_file)
 logger.info("Loaded {0} tokens".format( len( tokens ) ) )
-
-import re
 
 # start processing
 if (skip_headers and (max_rows > 0)):
@@ -75,10 +75,13 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			break
 		logger.info("processing row :: {0}".format(row_counter))
 
-		# swap tokens for data in the template
+		# load the template as json
 		this_script = FFMPEG()
 		this_script.from_JSON(template)
+		
+		# swap tokens for data in the template
 		for text_object in this_script.text_objects:
+			text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
 			#print text_object.content
 			for token_counter, token in enumerate(tokens):
 				data = data_row[token_counter]

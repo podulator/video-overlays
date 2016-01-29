@@ -5,6 +5,8 @@
 # ignore the fonts
 *.ttf
 *ttf
+# ignore images
+*.png
 # ignore the compiled python binaries
 *.pyc
 # backup files

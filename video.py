@@ -101,8 +101,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 		# swap tokens for data in the template
 		for text_object in this_script.text_objects:
 			text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
-			#print text_object.content
 			text_object.content = swap_tokens(tokens, data_row, text_object.content)
 
+		# run the command
 		print this_script
 

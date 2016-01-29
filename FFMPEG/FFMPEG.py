@@ -99,7 +99,7 @@ class FFMPEG(object):
 		self.destination_movie = data["_destination_movie"]
 		self.snapshot_timestamp = data["_snapshot_timestamp"]
 		self._snapshot_name = data["_snapshot_name"]
-		self._input_flags - data["_input_flags"]
+		self._input_flags = data["_input_flags"]
 
 		for text_object in data["_text_objects"]:
 			drawtext = DrawText()

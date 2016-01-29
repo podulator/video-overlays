@@ -4,31 +4,11 @@
 # urllib3, python-pip
 # pip install boto BeautifulSoup
 
-from boto.s3.connection import S3Connection
-import logging
 import sys
 import os
 
 from FFMPEG import DrawText
 from FFMPEG import FFMPEG
-
-# logging setup
-
-logger = logging.getLogger('Video Processor')
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch = logging.StreamHandler(sys.stdout)
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
-def setDebugLevel(val):
-    logger.setLevel(val)
-    ch.setLevel(val)
-
-debugLevel = logging.INFO
-debugLevel = logging.DEBUG
-setDebugLevel(debugLevel)
-
-# end logging setup
 
 font = "{0}/roboto_ttf/Roboto-Black.ttf".format(os.getcwd())
 movie = FFMPEG("JG 008 Animatic with TEXTLESS.mp4", "outmovie.webm")

@@ -9,3 +9,6 @@
 *.pyc
 # backup files
 *.bak
+# materials files
+materials/*
+materials/*.*

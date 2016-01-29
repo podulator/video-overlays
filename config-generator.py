@@ -1,0 +1,20 @@
+#!/usr/bin/python
+
+# requires 
+# urllib3, python-pip
+# pip install boto BeautifulSoup
+
+import sys
+import os
+
+from Config import Config
+
+config = Config()
+config.data_file = "sample.csv"
+config.data_seperator = '|'
+config.data_has_headers = True
+config.max_rows = 5
+config.terminate_on_completion = False
+
+template = config.to_JSON()
+print (template)

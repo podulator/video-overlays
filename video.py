@@ -71,8 +71,13 @@ template_file = "{0}/template.json".format(local_materials)
 config_file = "{0}/config.json".format(local_materials)
 
 '''
+fetch materials?
+'''
+
+'''
 config loading starts
 '''
+
 config = Config()
 logger.info("Loading json config from {0}".format(config_file))
 with open(config_file, 'r') as myfile:
@@ -91,6 +96,10 @@ logger.info("Loaded json template")
 logger.info("Loading token list from {0}".format(tokenlist_file))
 tokens = LoadTokenList(tokenlist_file)
 logger.info("Loaded {0} tokens".format( len( tokens ) ) )
+
+'''
+config loading ends
+'''
 
 # start processing
 if (skip_headers and (max_rows > 0)):
@@ -121,11 +130,12 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				text_object.content = swap_tokens(tokens, data_row, text_object.content)
 
 			# run the command
-			#print this_script
+			#print this_script.render_movie()
 
 			# do a snapshot?
 			if (config.create_snapshot):
 				logger.info("Creating snapshot")
+				#print this_script.render_snapshot()
 
 		if (config.create_html):
 			logger.info("Creating html")

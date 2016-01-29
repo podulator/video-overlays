@@ -50,17 +50,18 @@ class FFMPEG(object):
 	def image_objects(self):
 		return self._image_objects
 
-	def render(self):
+	def render_movie(self):
 		
 		all_objects = self._text_objects + self._image_objects
 		all_objects = ",\\\n".join( map( str, self._text_objects ) )
 		payload = "{0} -y -i \"{1}\" \\\n-strict -2 \\\n-vf \\\n{2} \\\n\"{3}\"".format(self.FFMPEG_PATH, self._source_movie, all_objects, self._destination_movie)
-		
-		if (self.snapshot_name != "" and self.snapshot_timestamp != ""):
-			snapshot = "\n{0} -y -i {1} -ss {2} -vframes 1 {3}".format(self.FFMPEG_PATH, self._destination_movie, self.snapshot_timestamp, self.snapshot_name)
-			payload += snapshot
-
 		return payload
+
+	def render_snapshot(self):
+		if (self.snapshot_name != "" and self.snapshot_timestamp != ""):
+			snapshot = "{0} -y -i {1} -ss {2} -vframes 1 {3}".format(self.FFMPEG_PATH, self._destination_movie, self.snapshot_timestamp, self.snapshot_name)
+			return snapshot
+		return ""
 
 	def to_JSON(self):
 		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
@@ -92,4 +93,4 @@ class FFMPEG(object):
 		self._image_objects = []
 
 	def __str__(self):
-		return self.render()
+		return self.render_movie()

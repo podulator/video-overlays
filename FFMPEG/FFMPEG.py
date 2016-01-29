@@ -4,6 +4,7 @@ from Font import Font
 from Shadow import Shadow
 from DrawText import DrawText
 from DrawImage import DrawImage
+from Encoder import Encoder
 import json
 
 class FFMPEG(object):
@@ -17,6 +18,14 @@ class FFMPEG(object):
 	@source_movie.setter
 	def source_movie(self, value):
 		self._source_movie = value
+
+	@property 
+	def input_flags(self):
+		return self._input_flags
+	
+	@input_flags.setter
+	def input_flags(self, value):
+		self._input_flags = value
 
 	@property
 	def destination_movie(self):
@@ -50,17 +59,35 @@ class FFMPEG(object):
 	def image_objects(self):
 		return self._image_objects
 
-	def render_movie(self):
+	@property
+	def output_encoders(self):
+		return self._output_encoders
+
+	def render_movies(self):
+
+		results = []
 		
-		all_objects = self._text_objects + self._image_objects
-		all_objects = ",\\\n".join( map( str, self._text_objects ) )
-		payload = "{0} -y -i \"{1}\" \\\n-strict -2 \\\n-vf \\\n{2} \\\n\"{3}\"".format(self.FFMPEG_PATH, self._source_movie, all_objects, self._destination_movie)
-		return payload
+		inputs = "{0} -y -i \"{1}\" {2} \\\n".format(self.FFMPEG_PATH, self._source_movie, self._input_flags)
+
+		# make the filters up
+		filter_objects = self._text_objects + self._image_objects
+		filter_objects = ",\\\n".join( map( str, self._text_objects ) )
+		filters = "-vf \\\n{0} \\\n".format(filter_objects)
+		
+		for encoder in self._output_encoders:
+			outputs = "{0} \"{1}.{2}\"".format(encoder.flags, self._destination_movie, encoder.extension)
+			payload = "{0}{1}{2}".format(inputs, filters, outputs)
+			results.append(payload)
+
+		return results
 
 	def render_snapshot(self):
 		if (self.snapshot_name != "" and self.snapshot_timestamp != ""):
-			snapshot = "{0} -y -i {1} -ss {2} -vframes 1 {3}".format(self.FFMPEG_PATH, self._destination_movie, self.snapshot_timestamp, self.snapshot_name)
-			return snapshot
+			# just take the first rendered movie as an input, no matter how many there are
+			for encoder in self._output_encoders:
+				src_movie = "{0}.{1}".format(self._destination_movie, encoder.extension)
+				snapshot = "{0} -y -i {1} -ss {2} -vframes 1 {3}".format(self.FFMPEG_PATH, src_movie, self.snapshot_timestamp, self.snapshot_name)
+				return snapshot
 		return ""
 
 	def to_JSON(self):
@@ -72,6 +99,7 @@ class FFMPEG(object):
 		self.destination_movie = data["_destination_movie"]
 		self.snapshot_timestamp = data["_snapshot_timestamp"]
 		self._snapshot_name = data["_snapshot_name"]
+		self._input_flags - data["_input_flags"]
 
 		for text_object in data["_text_objects"]:
 			drawtext = DrawText()
@@ -82,15 +110,22 @@ class FFMPEG(object):
 			image.from_JSON(image_object)
 			self._image_objects.append(image)
 
+		for encoder_object in data["_output_encoders"]:
+			encoder = Encoder()
+			encoder.from_JSON(encoder_object)
+			self._output_encoders.append(encoder)
+
 	def __init__(self, source = "", destination = ""):
 		
 		self._source_movie = source
 		self._destination_movie = destination
 		self._snapshot_timestamp = ""
 		self._snapshot_name = ""
+		self._input_flags = ""
 
 		self._text_objects = []
 		self._image_objects = []
+		self._output_encoders = []
 
 	def __str__(self):
-		return self.render_movie()
+		return ",\n\n".join( map( str, self.render_movies() ) )

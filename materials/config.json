@@ -1,0 +1,11 @@
+{
+	"_create_html": true,
+	"_create_movie": true, 
+	"_create_snapshot": true, 
+    "_data_file": "sample.csv", 
+    "_data_has_headers": true, 
+    "_data_seperator": "|", 
+    "_max_rows": 5, 
+    "_s3_destination": "", 
+    "_terminate_on_completion": false
+}

@@ -11,6 +11,8 @@
 *.pyc
 # backup files
 *.bak
+# log files
+*.log
 # materials files
 materials/*
 materials/*.*

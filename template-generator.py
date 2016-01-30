@@ -9,11 +9,18 @@ import os
 
 from FFMPEG import DrawText
 from FFMPEG import FFMPEG
+from FFMPEG import Encoder
 
-font = "{0}/roboto_ttf/Roboto-Black.ttf".format(os.getcwd())
-movie = FFMPEG("JG 008 Animatic with TEXTLESS.mp4", "outmovie.webm")
+font = "%_CWD_%/materials/roboto_ttf/Roboto-Black.ttf"
+movie = FFMPEG("JG 008 Animatic with TEXTLESS.mp4", "%_FundraiserGuid_%")
+movie.input_flags = "-strict -2"
 movie.snapshot_timestamp = "00:00:03.123"
-movie.snapshot_name = "snapshot.png"
+movie.snapshot_name = "%_FundraiserGuid_%.png"
+
+webm = Encoder("webm", "-c:v libvpx -quality good -cpu-used 2 -qmin 10 -qmax 42 -crf 18 -b:v 1M -c:a libvorbis -threads 4")
+mp4 = Encoder("mp4", "-profile:v main -level 3.1 -c:v libx264 -preset slow -crf 22")
+movie.output_encoders.append(webm)
+movie.output_encoders.append(mp4)
 
 first_name_object = DrawText("%FIRST_NAME%", 0, 97)
 first_name_object.line_max_length = 50

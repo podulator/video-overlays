@@ -5,6 +5,7 @@
 # pip install boto BeautifulSoup
 
 import csv
+import boto
 from boto.s3.connection import S3Connection
 import logging
 import sys
@@ -36,7 +37,7 @@ setDebugLevel(debugLevel)
 def LoadTokenList(data_file):
 	print data_seperator
 	with open(data_file, 'rb') as f:
-		reader = csv.reader(f, quotechar='"', delimiter=str(data_seperator), quoting=csv.QUOTE_NONE, skipinitialspace=True)
+		reader = csv.reader(f, quotechar='"', delimiter=str(data_seperator), quoting=csv.QUOTE_ALL, skipinitialspace=True)
 		for row in reader:
 			# add the cwd token
 			row.append(CWD_TOKEN)
@@ -73,6 +74,47 @@ config_file = "{0}/config.json".format(local_materials)
 '''
 fetch materials?
 '''
+try:
+	if not os.path.exists(local_materials):
+		os.mkdir(local_materials)
+	if (len(sys.argv) > 1):
+		path_parts = sys.argv[1].split("/")
+		remote_bucket = path_parts[0]
+		# get the path minus the bucket name
+		remote_path_root = "/".join(path_parts[1:])
+		# always force a trailing slash if it's not an empty string
+		if ("" != remote_path_root):
+			if ("/" != remote_path_root[-1]):
+				remote_path_root = "{0}/".format(remote_path_root)
+				logger.debug("Remote path normalised to :: {0}".format(remote_path_root))
+
+		remote_path_root_length = len(remote_path_root)
+
+		logger.info("Downloading materials from bucket :: {0}".format(remote_bucket))
+		s3_conn = boto.connect_s3()
+		bucket = s3_conn.get_bucket(remote_bucket)
+		bucket_list = bucket.list(remote_path_root)
+		for item in bucket_list:
+			remote_key = str(item.key)
+			local_path = "{0}/{1}".format(local_materials, remote_key[remote_path_root_length:])
+			logger.info("Downloading {0} to {1}".format(remote_key, local_path))
+			try:
+				item.get_contents_to_filename(local_path)
+				#pass
+			except OSError:
+				if not os.path.exists(local_path):
+					logger.info("Creating local folder :: {0}".format(local_path))
+					os.mkdir(local_path)
+		logger.info("All materials downloaded")
+
+	else:
+		logger.info("No materials bucket supplied, assuming everything is already local")
+		
+except Exception as e:
+	logger.error("Couldn't fetch materials :: {0}".format(e))
+	exit(1)
+
+exit(0)
 
 '''
 config loading starts
@@ -107,8 +149,12 @@ if (skip_headers and (max_rows > 0)):
 
 for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
     if (len(data_row) > 0):
-		if (skip_headers and (0 == row_counter)):
-		  continue
+		if (0 == row_counter):
+			if (len(data_row) != len(tokens)):
+				logger.error("Data definition doesn't match row data")
+				raise ValueError("Data definition doesn't match row data")
+			if (skip_headers):
+				continue
 		if (max_rows > 0 and max_rows <= row_counter):
 			break
 		logger.info("processing row :: {0}".format(row_counter))
@@ -118,7 +164,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 		this_script.from_JSON(template)
 		
 		if (config.create_movie):
-			logger.info("Creating movie")
+			logger.info("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
+				
 			# fix input output paths possibly containing tokens
 			this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
 			this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
@@ -130,12 +177,13 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				text_object.content = swap_tokens(tokens, data_row, text_object.content)
 
 			# run the command
-			#print this_script.render_movie()
+			# this_script.render_movies()
+			print ",\n\n".join( map( str, this_script.render_movies() ) )
 
 			# do a snapshot?
 			if (config.create_snapshot):
 				logger.info("Creating snapshot")
-				#print this_script.render_snapshot()
+				print this_script.render_snapshot()
 
 		if (config.create_html):
 			logger.info("Creating html")

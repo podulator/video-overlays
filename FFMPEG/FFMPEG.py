@@ -75,9 +75,10 @@ class FFMPEG(object):
 		filters = "-vf \\\n{0} \\\n".format(filter_objects)
 		
 		for encoder in self._output_encoders:
-			outputs = "{0} \"{1}.{2}\"".format(encoder.flags, self._destination_movie, encoder.extension)
+			movie_name = "{}.{}".format(self._destination_movie, encoder.extension)
+			outputs = "{0} \"{1}\"".format(encoder.flags, movie_name)
 			payload = "{0}{1}{2}".format(inputs, filters, outputs)
-			results.append(payload)
+			results.append([movie_name, payload])
 
 		return results
 

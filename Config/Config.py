@@ -60,7 +60,7 @@ class Config(object):
 
 	@property
 	def s3_destination(self):
-		return _s3_destination
+		return self._s3_destination
 	
 	@s3_destination.setter
 	def s3_destination(self, value):

@@ -29,6 +29,26 @@ class DrawText(Renderable):
 		
 		return content
 
+	def render_x(self):
+		my_x = str(self._x)
+		if (None != re.search("center", my_x)):
+			my_x = re.sub("center", "((w-text_w)/2)", my_x)
+		if (None != re.search("right", my_x)):
+			my_x = re.sub("right", "(w-text_w)", my_x)
+		if (None != re.search("left", my_x)):
+			my_x = re.sub("left", "0", my_x)
+		return my_x
+
+	def render_y(self):
+		my_y = str(self._y)
+		if (None != re.search("middle", my_y)):
+			my_y = re.sub("middle", "((h-text_h)/2)", my_y)
+		if (None != re.search("top", my_y)):
+			my_y = re.sub("top", "0", my_y)
+		if (None != re.search("bottom", my_y)):
+			my_y = re.sub("bottom", "(h-text_h)", my_y)
+		return my_y
+
 	def render(self):
 
 		if (self._content_dirty):
@@ -54,8 +74,8 @@ class DrawText(Renderable):
 
 		main = "text='{0}': x={1}: y={2}: alpha={3}{4}{5}".format(   
 																	self.content, 
-																	self.x, 
-																	self.y, 
+																	self.render_x(), 
+																	self.render_y(), 
 																	self.alpha, 
 																	border, 
 																	bounds)
@@ -198,6 +218,13 @@ class DrawText(Renderable):
 		self._box.from_JSON(data["_box"])
 		self._font.from_JSON(data["_font"])
 		self._drop_shadow.from_JSON(data["_drop_shadow"])
+
+	def isfloat(value):
+		try:
+			float(value)
+			return True
+		except ValueError:
+			return False
 
 	def __init__(self, text = "", frame_from = 0, frame_to = 0):
 		

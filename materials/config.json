@@ -6,6 +6,6 @@
     "_data_has_headers": true, 
     "_data_seperator": "|", 
     "_max_rows": 5, 
-    "_s3_destination": "", 
+    "_s3_destination": "video-transcodes-justgiving-com/my-story/%_PageShortName_%/", 
     "_terminate_on_completion": false
 }

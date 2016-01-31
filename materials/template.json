@@ -27,7 +27,7 @@
                 "_opacity": 1.0
             }, 
             "_clean_content": true, 
-            "_content": "%_FirstName_%", 
+            "_content": "Good luck %_FirstName_%", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -47,7 +47,7 @@
             "_frame_to": 97, 
             "_line_max_length": 50, 
             "_object_type": "drawtext", 
-            "_x": 600, 
+            "_x": "right-50", 
             "_y": 169.99
         }, 
         {
@@ -79,10 +79,10 @@
             }, 
             "_frame_from": 265, 
             "_frame_to": 348, 
-            "_line_max_length": 0, 
+            "_line_max_length": 30, 
             "_object_type": "drawtext", 
-            "_x": "(w-text_w)/2", 
-            "_y": 183
+            "_x": "center", 
+            "_y": "middle"
         }, 
         {
             "_alpha": 1.0, 

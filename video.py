@@ -231,6 +231,13 @@ logger.info("Loading token list from {0}".format(data_defintion_file))
 tokens = LoadTokenList(data_defintion_file)
 logger.info("Loaded {0} tokens".format( len( tokens ) ) )
 
+if (config.create_html):
+	html_template_path = "{0}/{1}".format(local_materials, config.html_template)
+	logger.info("Loading html template from {0}".format(html_template_path))
+	with open(html_template_path, 'r') as f:
+		html_template = f.read().strip()
+	logger.info("Loaded html template")
+
 '''
 config loading ends
 '''
@@ -281,12 +288,12 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 
 			movie_name = movie[0]
 			movie_script = movie[1]
-
+			'''
 			# actually execute the command
 			result = os.system(movie_script)
 			if (result != 0):
 				logger.error("Movie render command failed :: {0}".format(movie_script))
-				
+			'''
 			# upload the results ?
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
@@ -303,10 +310,11 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			snapshot_name = snapshot[0]
 			snapshot_script = snapshot[1]
 			# actually execute the command
+			'''
 			result = os.system(snapshot_script)
 			if (result != 0):
 				logger.error("Snapshot render command failed :: {0}".format(snapshot_script))
-				
+			'''
 			# upload the results ?
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
@@ -333,6 +341,27 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 
 	if (config.create_html):
 		logger.info("Creating html")
+		html_output_name = swap_tokens(tokens, data_row, config.html_output_file)
+		this_html_template = swap_tokens(tokens, data_row, html_template)
+		# clean up first to be super sure we don't ever upload the wrong personalised file for someone
+		if (os.path.exists(html_output_name)):
+			os.remove(html_output_name)
+		
+		# write the transformed template back out
+		with open(html_output_name, "w") as f:
+			f.write(this_html_template)
+
+		# upload to s3?
+		if (len(config.s3_destination) > 0 and running_locally == False):
+			upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+			upload_path = "{0}{1}".format(upload_path, html_output_name)
+			logger.info("Uploading html to :: {0}".format(upload_path))
+			if (not upload_file_to_S3(html_output_name, upload_path)):
+				logger.error("Failed to upload html to :: {0}".format(upload_path))
+					
+			# delete local copy?
+			if (os.path.exists(html_output_name)):
+				os.remove(html_output_name)
 
 logger.info("Run completed")
 if (len(s3_logs_path) > 0):

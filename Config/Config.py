@@ -59,6 +59,22 @@ class Config(object):
 		self._data_seperator = value
 
 	@property
+	def html_output_file(self):
+		return self._html_output_file
+	
+	@html_output_file.setter
+	def html_output_file(self, value):
+		self._html_output_file = value
+	
+	@property
+	def html_template(self):
+		return self._html_template
+	
+	@html_template.setter
+	def html_template(self, value):
+		self._html_template = value
+
+	@property
 	def max_rows(self):
 		return self._max_rows
 	
@@ -101,6 +117,8 @@ class Config(object):
 		self._data_definition_file = data["_data_definition_file"]
 		self._data_seperator = data["_data_seperator"]
 		self._data_has_headers = data["_data_has_headers"]
+		self._html_output_file = data["_html_output_file"]
+		self._html_template = data["_html_template"]
 		self._max_rows = data["_max_rows"]
 		self._s3_destination = data["_s3_destination"]
 		self._script_file = data["_script_file"]
@@ -114,6 +132,8 @@ class Config(object):
 		self._data_definition_file = ""
 		self._data_seperator = ","
 		self._data_has_headers = False
+		self._html_output_file = ""
+		self._html_template = ""
 		self._max_rows = 0
 		self._s3_destination = ""
 		self._script_file = ""

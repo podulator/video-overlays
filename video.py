@@ -240,7 +240,7 @@ if (skip_headers and (max_rows > 0)):
 	max_rows += 1
 
 for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
-    if (len(data_row) == 0):
+	if (len(data_row) == 0):
 		continue
 	if (len(data_row) != len(tokens)):
 		logger.error("Data definition doesn't match row data")
@@ -274,14 +274,15 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 	movies = this_script.render_movies()
 
 	if (config.create_movie):
+
 		# run the command
 		logger.info("Rendering {0} movies".format(len(movies)))
 		for movie in movies:
 
 			movie_name = movie[0]
 			movie_script = movie[1]
+
 			# actually execute the command
-				
 			result = os.system(movie_script)
 			if (result != 0):
 				logger.error("Movie render command failed :: {0}".format(movie_script))
@@ -293,17 +294,42 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				logger.info("Uploading movie to :: {0}".format(upload_path))
 				if (not upload_file_to_S3(movie_name, upload_path)):
 					logger.error("Failed to upload movie to :: {0}".format(upload_path))
-					
-				# and delete the local if we're uploading
-				logger.info("Deleting local movie :: {0}".format(movie_name))
-				if (os.path.exists(movie_name)):
-					os.remove(movie_name)
 
 		# do we make a snapshot?
 		# this is only possible if we have a rendered movie
 		if (config.create_snapshot):
 			logger.info("Creating snapshot")
-			#print this_script.render_snapshot()
+			snapshot = this_script.render_snapshot()
+			snapshot_name = snapshot[0]
+			snapshot_script = snapshot[1]
+			# actually execute the command
+			result = os.system(snapshot_script)
+			if (result != 0):
+				logger.error("Snapshot render command failed :: {0}".format(snapshot_script))
+				
+			# upload the results ?
+			if (len(config.s3_destination) > 0 and running_locally == False):
+				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+				upload_path = "{0}{1}".format(upload_path, snapshot_name)
+				logger.info("Uploading snapshot to :: {0}".format(upload_path))
+				if (not upload_file_to_S3(snapshot_name, upload_path)):
+					logger.error("Failed to upload snapshot to :: {0}".format(upload_path))
+					
+		# clean up movies and snapshots?
+		if (len(config.s3_destination) > 0 and running_locally == False):
+			logger.info("Cleaning up local movie and snapshot files")
+			
+			for movie in movies:
+				movie_name = movie[0]
+				# and delete the local if we're uploading
+				logger.info("Deleting local movie :: {0}".format(movie_name))
+				if (os.path.exists(movie_name)):
+					os.remove(movie_name)
+				
+			# and delete the local if we're uploading
+			if (os.path.exists(snapshot_name) and config.create_snapshot):
+				logger.info("Deleting local snapshot :: {0}".format(snapshot_name))
+				os.remove(snapshot_name)
 
 	if (config.create_html):
 		logger.info("Creating html")

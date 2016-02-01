@@ -88,7 +88,7 @@ class FFMPEG(object):
 			for encoder in self._output_encoders:
 				src_movie = "{0}.{1}".format(self._destination_movie, encoder.extension)
 				snapshot = "{0} -y -i {1} -ss {2} -vframes 1 {3}".format(self.FFMPEG_PATH, src_movie, self.snapshot_timestamp, self.snapshot_name)
-				return snapshot
+				return [self._snapshot_name, snapshot]
 		return ""
 
 	def to_JSON(self):

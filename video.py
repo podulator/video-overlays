@@ -39,11 +39,11 @@ def setDebugLevel(val):
 
 def show_help():
 	path = sys.argv[0]
-	print "run as {0} [ -help or -local or S3MaterialsURL or S3MaterialsURL:S3LogsURL ]".format(path)
+	print "run as {0} [ -help or -local or S3ConfigFileUrl or S3ConfigFileUrl:S3LogsURL ]".format(path)
 	print "-help :: show this help"
 	print "-local :: assume all materials alreaady exist under ./materials/"
-	print "S3MaterialsURL :: The full bucket name and path to a materials forlder. Logs will be stored in derived bucketname/video_logs"
-	print "S3MaterialsURL:S3LogsURL :: Full bucket name and path for both materials and logs, colon seperated"
+	print "S3ConfigFileUrl :: The full bucket name and path to a valid config file. Logs will be stored in derived bucketname/video_logs"
+	print "S3ConfigFileUrl:S3LogsURL :: Full bucket name and path for both a config file and logs, colon seperated"
 	print ""
 
 def purge(dir, pattern):

@@ -30,6 +30,8 @@ config_file = "{0}/config.json".format(local_materials)
 log_file = "{}-{}.log".format( gethostname(), datetime.datetime.now().isoformat(' ') )
 log_file = log_file.replace(" ", "-")
 running_locally = False
+running_on_ec2 = False
+instance_id = ""
 
 def setDebugLevel(val):
 	logger.setLevel(val)
@@ -93,7 +95,9 @@ def handle_startup_params():
 	else:
 		logger.info("Trying to get startup params from user data")
 		params = boto.utils.get_instance_userdata()
-	
+		instance_id = boto.utils.get_instance_metadata()['instance-id']
+		if (len(instance_id) > 0):
+			running_on_ec2 = True
 	params = params.strip()
 	if (len(params) == 0):
 		show_help()
@@ -301,3 +305,9 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 logger.info("Run completed")
 if (len(s3_logs_path) > 0):
 	upload_file_to_S3(log_file, "{0}/{1}".format(s3_logs_path, log_file))
+
+if (running_on_ec2 and config.terminate_on_exit):
+	print "terminating instance :: {}".format(instance_id)
+    ec2 = boto.ec2.connect_to_region('eu-west-1')
+    ec2.terminate_instances(instance_ids=[instance_id])
+    print "dying now...."

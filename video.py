@@ -19,13 +19,13 @@ from FFMPEG import DrawText
 from FFMPEG import FFMPEG
 from Config import Config
 
-s3_materials_path = ""
+s3_config_path = ""
 s3_logs_path = ""
 cwd = os.getcwd()
 CWD_TOKEN = "%_CWD_%"
 local_materials = "{0}/materials".format(cwd)
 local_output = "{0}/outputs".format(cwd)
-config_file = "{0}/config.json".format(local_materials)
+config_file = "{0}/config.json".format(cwd)
 log_file = "{}-{}.log".format( gethostname(), datetime.datetime.now().isoformat(' ') )
 log_file = log_file.replace(" ", "-")
 running_locally = False
@@ -90,7 +90,7 @@ def upload_file_to_S3(source, destination, make_public = False):
 
 # sort out the start up params from the cli or fall back to user data
 def handle_startup_params():
-	global s3_materials_path, s3_logs_path, running_locally
+	global s3_config_path, s3_logs_path, running_locally
 	params = ""
 	if (len(sys.argv) > 1):
 		params = sys.argv[1]
@@ -116,13 +116,13 @@ def handle_startup_params():
 		else:
 			param_parts = params.split(":")
 			if (len(param_parts) >= 2):
-				s3_materials_path = param_parts[0]
+				s3_config_path = param_parts[0]
 				s3_logs_path = param_parts[1]
 			else:
-				s3_materials_path = param_parts[0]
-				s3_logs_bucket, discard_path = get_bucket_and_path_from_s3_url(s3_materials_path)
+				s3_config_path = param_parts[0]
+				s3_logs_bucket, discard_path = get_bucket_and_path_from_s3_url(s3_config_path)
 				s3_logs_path = "{0}/video_logs/".format(s3_logs_bucket)
-	logger.debug("s3_materials_path = {0}".format(s3_materials_path))
+	logger.debug("s3_config_path = {0}".format(s3_config_path))
 	logger.debug("s3_logs_path = {0}".format(s3_logs_path))
 
 def LoadTokenList(data_file):
@@ -186,9 +186,40 @@ try:
 	if (not os.path.exists(local_output)):
 		os.mkdir(local_output)
 
-	if (len(s3_materials_path) > 0):
-		
-		remote_bucket, remote_path_root = get_bucket_and_path_from_s3_url(s3_materials_path)
+	if (len(s3_config_path) > 0):
+
+		# download the config file
+		config_bucket, config_key = get_bucket_and_path_from_s3_url(s3_config_path)
+		# strip trailing slash as this is a file, not a dir
+		config_key = config_key[:-1]
+		logger.info("Downloading config from bucket :: {0}".format(config_bucket))
+		s3_conn = boto.connect_s3()
+		bucket = s3_conn.get_bucket(config_bucket)
+		key = bucket.get_key(config_key)
+		logger.info("Downloading config file {0} to {1}".format(config_key, config_file))
+		key.get_contents_to_filename(config_file)
+
+	# by now we should always have a local or a downloaded config file
+	'''
+	config loading starts
+	'''
+	config = Config()
+	logger.info("Loading json config from {0}".format(config_file))
+	with open(config_file, 'r') as myfile:
+		config.from_JSON(json.loads(myfile.read().strip()))
+	logger.info("Loaded json config")
+
+	skip_headers = config.data_has_headers
+	data_seperator = config.data_seperator
+	max_rows = config.max_rows
+	data_file = "{0}/{1}".format(local_materials, config.data_file)
+	data_defintion_file = "{0}/{1}".format(local_materials, config.data_definition_file)
+	template_file = "{0}/{1}".format(local_materials, config.script_file)
+
+	# get s3 materials if they're specified and we're not running locally
+	if (len(config.s3_materials) > 0 and not running_locally):
+
+		remote_bucket, remote_path_root = get_bucket_and_path_from_s3_url(s3_config_path)
 		remote_path_root_length = len(remote_path_root)
 
 		logger.info("Downloading materials from bucket :: {0}".format(remote_bucket))
@@ -214,23 +245,6 @@ except ValueError as e:
 	logger.error("Couldn't fetch materials :: {0}".format(e))
 	exit(1)
 
-'''
-config loading starts
-'''
-
-config = Config()
-logger.info("Loading json config from {0}".format(config_file))
-with open(config_file, 'r') as myfile:
-	config.from_JSON(json.loads(myfile.read().strip()))
-logger.info("Loaded json config")
-
-skip_headers = config.data_has_headers
-data_seperator = config.data_seperator
-max_rows = config.max_rows
-data_file = "{0}/{1}".format(local_materials, config.data_file)
-data_defintion_file = "{0}/{1}".format(local_materials, config.data_definition_file)
-template_file = "{0}/{1}".format(local_materials, config.script_file)
-
 logger.info("Loading json template from {0}".format(template_file))
 with open(template_file, 'r') as myfile:
 	template = json.loads(myfile.read().strip())
@@ -250,10 +264,6 @@ if (config.create_html):
 '''
 config loading ends
 '''
-# DEBUGGER
-#config.create_movie = False
-max_rows = 1
-# END DEBUGGER
 
 # start processing
 if (skip_headers and (max_rows > 0)):
@@ -263,7 +273,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 	if (len(data_row) == 0):
 		continue
 	if (len(data_row) != len(tokens)):
-		logger.error("Data definition doesn't match row data")
+		logger.error("Data definition doesn't match row data for row :: {0}".format(row_counter))
 		continue
 
 	# headers and limits checking

@@ -24,6 +24,7 @@ s3_logs_path = ""
 cwd = os.getcwd()
 CWD_TOKEN = "%_CWD_%"
 local_materials = "{0}/materials".format(cwd)
+local_output = "{0}/outputs".format(cwd)
 config_file = "{0}/config.json".format(local_materials)
 log_file = "{}-{}.log".format( gethostname(), datetime.datetime.now().isoformat(' ') )
 log_file = log_file.replace(" ", "-")
@@ -64,7 +65,7 @@ def get_bucket_and_path_from_s3_url(url):
 	logger.debug("Bucket == {0} :: Path = {1}".format(bucket, path_root))
 	return bucket, path_root
 
-def upload_file_to_S3(source, destination):
+def upload_file_to_S3(source, destination, make_public = False):
 	try:
 		logger.debug("Uploading {0} to {1}".format(source, destination))
 		bucket_name, path = get_bucket_and_path_from_s3_url(destination)
@@ -78,8 +79,9 @@ def upload_file_to_S3(source, destination):
 		key.key = path
 		# do the upload
 		key.set_contents_from_filename(source)
-		# make it public
-		key.set_acl('public-read')
+		# make it public?
+		if (make_public):
+			key.set_acl('public-read')
 		logger.debug("Upload complete")
 		return True
 	except Exception as e:
@@ -179,8 +181,10 @@ try:
 
 	handle_startup_params()
 
-	if not os.path.exists(local_materials):
+	if (not os.path.exists(local_materials)):
 		os.mkdir(local_materials)
+	if (not os.path.exists(local_output)):
+		os.mkdir(local_output)
 
 	if (len(s3_materials_path) > 0):
 		
@@ -219,12 +223,14 @@ logger.info("Loading json config from {0}".format(config_file))
 with open(config_file, 'r') as myfile:
 	config.from_JSON(json.loads(myfile.read().strip()))
 logger.info("Loaded json config")
+
 skip_headers = config.data_has_headers
 data_seperator = config.data_seperator
 max_rows = config.max_rows
 data_file = "{0}/{1}".format(local_materials, config.data_file)
 data_defintion_file = "{0}/{1}".format(local_materials, config.data_definition_file)
 template_file = "{0}/{1}".format(local_materials, config.script_file)
+
 logger.info("Loading json template from {0}".format(template_file))
 with open(template_file, 'r') as myfile:
 	template = json.loads(myfile.read().strip())
@@ -244,6 +250,10 @@ if (config.create_html):
 '''
 config loading ends
 '''
+# DEBUGGER
+#config.create_movie = False
+max_rows = 1
+# END DEBUGGER
 
 # start processing
 if (skip_headers and (max_rows > 0)):
@@ -264,26 +274,27 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 
 	logger.info("processing row :: {0}".format(row_counter))
 
-	# load the template as json
-	this_script = FFMPEG()
-	this_script.from_JSON(template)
-		
-	# we need to work out paths and filenames  for html even if we don't render the movie
-	logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
-				
-	# fix input output paths possibly containing tokens
-	this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
-	this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
-	this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
-
-	# swap tokens for data in the template
-	for text_object in this_script.text_objects:
-		text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
-		text_object.content = swap_tokens(tokens, data_row, text_object.content)
-
-	movies = this_script.render_movies()
-
 	if (config.create_movie):
+
+		# load the template as json
+		this_script = FFMPEG()
+		this_script.from_JSON(template)
+		this_script.output_path_prefix = local_output
+		
+		# we need to work out paths and filenames  for html even if we don't render the movie
+		logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
+					
+		# fix input output paths possibly containing tokens
+		this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
+		this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
+		this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
+
+		# swap tokens for data in the template
+		for text_object in this_script.text_objects:
+			text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
+			text_object.content = swap_tokens(tokens, data_row, text_object.content)
+
+		movies = this_script.render_movies()
 
 		# run the command
 		logger.info("Rendering {0} movies".format(len(movies)))
@@ -302,7 +313,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
 				upload_path = "{0}{1}".format(upload_path, movie_name)
 				logger.info("Uploading movie to :: {0}".format(upload_path))
-				if (not upload_file_to_S3(movie_name, upload_path)):
+				if (not upload_file_to_S3("{0}/{1}".format(local_output, movie_name), upload_path, True)):
 					logger.error("Failed to upload movie to :: {0}".format(upload_path))
 
 		# do we make a snapshot?
@@ -312,6 +323,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			snapshot = this_script.render_snapshot()
 			snapshot_name = snapshot[0]
 			snapshot_script = snapshot[1]
+			snapshot_local_path = "{0}/{1}".format(local_output, snapshot_name)
 			
 			# actually execute the command
 			result = os.system(snapshot_script)
@@ -323,7 +335,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
 				upload_path = "{0}{1}".format(upload_path, snapshot_name)
 				logger.info("Uploading snapshot to :: {0}".format(upload_path))
-				if (not upload_file_to_S3(snapshot_name, upload_path)):
+				if (not upload_file_to_S3(snapshot_local_path, upload_path, True)):
 					logger.error("Failed to upload snapshot to :: {0}".format(upload_path))
 					
 		# clean up movies and snapshots?
@@ -331,27 +343,27 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			logger.info("Cleaning up local movie and snapshot files")
 			
 			for movie in movies:
-				movie_name = movie[0]
+				movie_name = "{0}/{1}".format(local_output , movie[0])
 				# and delete the local if we're uploading
 				logger.info("Deleting local movie :: {0}".format(movie_name))
 				if (os.path.exists(movie_name)):
 					os.remove(movie_name)
 				
-			# and delete the local if we're uploading
-			if (os.path.exists(snapshot_name) and config.create_snapshot):
-				logger.info("Deleting local snapshot :: {0}".format(snapshot_name))
-				os.remove(snapshot_name)
+			if (os.path.exists(snapshot_local_path) and config.create_snapshot):
+				logger.info("Deleting local snapshot :: {0}".format(snapshot_local_path))
+				os.remove(snapshot_local_path)
 
 	if (config.create_html):
 		logger.info("Creating html")
 		html_output_name = swap_tokens(tokens, data_row, config.html_output_file)
 		this_html_template = swap_tokens(tokens, data_row, html_template)
+		html_local_destination = "{0}/{1}".format(local_output, html_output_name)
 		# clean up first to be super sure we don't ever upload the wrong personalised file for someone
-		if (os.path.exists(html_output_name)):
-			os.remove(html_output_name)
+		if (os.path.exists(html_local_destination)):
+			os.remove(html_local_destination)
 		
 		# write the transformed template back out
-		with open(html_output_name, "w") as f:
+		with open(html_local_destination, "w") as f:
 			f.write(this_html_template)
 
 		# upload to s3?
@@ -359,16 +371,19 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			upload_path = swap_tokens(tokens, data_row, config.s3_destination)
 			upload_path = "{0}{1}".format(upload_path, html_output_name)
 			logger.info("Uploading html to :: {0}".format(upload_path))
-			if (not upload_file_to_S3(html_output_name, upload_path)):
+			if (not upload_file_to_S3(html_local_destination, upload_path, True)):
 				logger.error("Failed to upload html to :: {0}".format(upload_path))
 					
 			# delete local copy?
-			if (os.path.exists(html_output_name)):
-				os.remove(html_output_name)
+			if (os.path.exists(html_local_destination)):
+				os.remove(html_local_destination)
+
+if (len(s3_logs_path) > 0):
+	log_file_path = "{0}/{1}".format(s3_logs_path, log_file)
+	logger.info("Uploading log to :: {0}".format(log_file_path))
+	upload_file_to_S3(log_file, log_file_path)
 
 logger.info("Run completed")
-if (len(s3_logs_path) > 0):
-	upload_file_to_S3(log_file, "{0}/{1}".format(s3_logs_path, log_file))
 
 if (running_on_ec2 and config.terminate_on_completion):
 	print "terminating instance :: {}".format(instance_id)

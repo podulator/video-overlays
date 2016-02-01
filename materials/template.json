@@ -1,5 +1,6 @@
 {
     "_destination_movie": "%_FundraiserGuid_%", 
+    "_output_path_prefix": "", 
     "_image_objects": [], 
     "_input_flags": "-strict -2", 
     "_output_encoders": [
@@ -28,6 +29,7 @@
             }, 
             "_clean_content": true, 
             "_content": "Good luck %_FirstName_%", 
+            "_fallback_content": "", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -62,6 +64,7 @@
             }, 
             "_clean_content": true, 
             "_content": "%_CharityDisplayName_%", 
+            "_fallback_content": "", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -96,6 +99,7 @@
             }, 
             "_clean_content": true, 
             "_content": "%_DonorMessage1_%", 
+            "_fallback_content": "Fallback donation message #1", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -130,6 +134,7 @@
             }, 
             "_clean_content": true, 
             "_content": "%_DonorMessage2_%", 
+            "_fallback_content": "Fallback donation message #2", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -164,6 +169,7 @@
             }, 
             "_clean_content": true, 
             "_content": "%_DonorMessage3_%", 
+            "_fallback_content": "Fallback donation message #3", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {
@@ -198,6 +204,7 @@
             }, 
             "_clean_content": true, 
             "_content": "%_DonorMessage4_%", 
+            "_fallback_content": "Fallback donation message #4", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
             "_drop_shadow": {

@@ -53,13 +53,13 @@ class DrawText(Renderable):
 
 		if (self._content_dirty):
 			if (self._clean_content):
-				self._content = self.scrub(self._content)
+				self.content = self.scrub(self.content)
 				#print "content cleaned to {0}".format(self._content)
-			if (self._content_max_length > 0 and self._content_max_length < len(self._content)):
-				self._content = self.fix_content_length()
+			if (self._content_max_length > 0 and self._content_max_length < len(self.content)):
+				self.content = self.fix_content_length()
 				#print "content shortened to {0} because longer than {1}".format(self._content, self._content_max_length)
-			if (self._line_max_length > 0 and self._line_max_length < len(self._content)):
-				self._content = self.fix_line_length()
+			if (self._line_max_length > 0 and self._line_max_length < len(self.content)):
+				self.content = self.fix_line_length()
 				#print "content split to {0} because lines longer than {1}".format(self._content, self._line_max_length)
 
 		self._content_dirty = False
@@ -90,26 +90,20 @@ class DrawText(Renderable):
 
 	@property
 	def content(self):
-		'''
-		if (self._content_dirty):
-			if (self._clean_content):
-				self._content = self.scrub(self._content)
-				#print "content cleaned to {0}".format(self._content)
-			if (self._content_max_length > 0 and self._content_max_length < len(self._content)):
-				self._content = self.fix_content_length()
-				#print "content shortened to {0} because longer than {1}".format(self._content, self._content_max_length)
-			if (self._line_max_length > 0 and self._line_max_length < len(self._content)):
-				self._content = self.fix_line_length()
-				#print "content split to {0} because lines longer than {1}".format(self._content, self._line_max_length)
-
-		self._content_dirty = False
-		'''
-		return self._content
+		return self._content.strip() if (len(self._content) > 0) else self._fallback_content
 	
 	@content.setter
 	def content(self, value):
 		self._content_dirty = True
 		self._content = value
+
+	@property
+	def fallback_content(self):
+		return self._fallback_content
+	
+	@fallback_content.setter
+	def fallback_content(self, value):
+		self._fallback_content = value
 
 	@property
 	def clean_content(self):
@@ -201,6 +195,7 @@ class DrawText(Renderable):
 	def from_JSON(self, data):
 
 		self.content = data["_content"]
+		self.fallback_content = data["_fallback_content"]
 		self.clean_content = data["_clean_content"]
 		self.content_max_length = data["_content_max_length"]
 		self.line_max_length = data["_line_max_length"]
@@ -232,6 +227,7 @@ class DrawText(Renderable):
 
 		self._content_dirty = False
 		self.content = text
+		self.fallback_content = ""
 		self.clean_content = False
 		self.content_max_length = 0
 		self.line_max_length = 0

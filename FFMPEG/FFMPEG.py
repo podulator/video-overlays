@@ -12,6 +12,14 @@ class FFMPEG(object):
 	FFMPEG_PATH = "/usr/bin/ffmpeg"
 
 	@property
+	def output_path_prefix(self):
+		return self._output_path_prefix
+	
+	@output_path_prefix.setter
+	def output_path_prefix(self, value):
+		self._output_path_prefix = value
+
+	@property
 	def source_movie(self):
 		return self._source_movie
 
@@ -76,7 +84,7 @@ class FFMPEG(object):
 		
 		for encoder in self._output_encoders:
 			movie_name = "{}.{}".format(self._destination_movie, encoder.extension)
-			outputs = "{0} \"{1}\"".format(encoder.flags, movie_name)
+			outputs = "{0} \"{1}/{2}\"".format(encoder.flags, self._output_path_prefix, movie_name)
 			payload = "{0}{1}{2}".format(inputs, filters, outputs)
 			results.append([movie_name, payload])
 
@@ -87,7 +95,7 @@ class FFMPEG(object):
 			# just take the first rendered movie as an input, no matter how many there are
 			for encoder in self._output_encoders:
 				src_movie = "{0}.{1}".format(self._destination_movie, encoder.extension)
-				snapshot = "{0} -y -i {1} -ss {2} -vframes 1 {3}".format(self.FFMPEG_PATH, src_movie, self.snapshot_timestamp, self.snapshot_name)
+				snapshot = "{0} -y -i \"{1}/{2}\" -ss {3} -vframes 1 {4}/{5}".format(self.FFMPEG_PATH, self._output_path_prefix, src_movie, self.snapshot_timestamp, self._output_path_prefix, self.snapshot_name)
 				return [self._snapshot_name, snapshot]
 		return ""
 
@@ -101,6 +109,7 @@ class FFMPEG(object):
 		self.snapshot_timestamp = data["_snapshot_timestamp"]
 		self._snapshot_name = data["_snapshot_name"]
 		self._input_flags = data["_input_flags"]
+		self._output_path_prefix = data["_output_path_prefix"]
 
 		for text_object in data["_text_objects"]:
 			drawtext = DrawText()
@@ -123,6 +132,7 @@ class FFMPEG(object):
 		self._snapshot_timestamp = ""
 		self._snapshot_name = ""
 		self._input_flags = ""
+		self._output_path_prefix = ""
 
 		self._text_objects = []
 		self._image_objects = []

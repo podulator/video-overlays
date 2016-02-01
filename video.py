@@ -256,22 +256,23 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 		this_script = FFMPEG()
 		this_script.from_JSON(template)
 		
-		if (config.create_movie):
-			logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
+		# we need to work out paths and filenames  for html even if we don't render the movie
+		logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
 				
-			# fix input output paths possibly containing tokens
-			this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
-			this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
-			this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
+		# fix input output paths possibly containing tokens
+		this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
+		this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
+		this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
 
-			# swap tokens for data in the template
-			for text_object in this_script.text_objects:
-				text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
-				text_object.content = swap_tokens(tokens, data_row, text_object.content)
+		# swap tokens for data in the template
+		for text_object in this_script.text_objects:
+			text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
+			text_object.content = swap_tokens(tokens, data_row, text_object.content)
 
+		movies = this_script.render_movies()
+
+		if (config.create_movie):
 			# run the command
-			movies = this_script.render_movies()
-
 			logger.info("Rendering {0} movies".format(len(movies)))
 			for movie in movies:
 
@@ -296,7 +297,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 					if (os.path.exists(movie_name)):
 						os.remove(movie_name)
 
-			# do a snapshot?
+			# do we make a snapshot?
+			# this is only possible if we have a rendered movie
 			if (config.create_snapshot):
 				logger.info("Creating snapshot")
 				#print this_script.render_snapshot()
@@ -310,6 +312,6 @@ if (len(s3_logs_path) > 0):
 
 if (running_on_ec2 and config.terminate_on_completion):
 	print "terminating instance :: {}".format(instance_id)
-    ec2 = boto.ec2.connect_to_region('eu-west-1')
-    ec2.terminate_instances(instance_ids=[instance_id])
-    print "dying now...."
+	ec2 = boto.ec2.connect_to_region('eu-west-1')
+	ec2.terminate_instances(instance_ids=[instance_id])
+	print "dying now...."

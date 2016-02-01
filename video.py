@@ -66,7 +66,7 @@ def get_bucket_and_path_from_s3_url(url):
 
 def upload_file_to_S3(source, destination):
 	try:
-		logger.info("Uploading {0} to {1}".format(source, destination))
+		logger.debug("Uploading {0} to {1}".format(source, destination))
 		bucket_name, path = get_bucket_and_path_from_s3_url(destination)
 		# strip trailing slash
 		path = path[:-1]
@@ -76,8 +76,11 @@ def upload_file_to_S3(source, destination):
 		logger.debug("Setting key :: {0}".format(path))
 		key = boto.s3.key.Key(bucket)
 		key.key = path
+		# do the upload
 		key.set_contents_from_filename(source)
-		logger.info("Upload complete")
+		# make it public
+		key.set_acl('public-read')
+		logger.debug("Upload complete")
 		return True
 	except Exception as e:
 		logger.error(e)
@@ -288,12 +291,12 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 
 			movie_name = movie[0]
 			movie_script = movie[1]
-			'''
+			
 			# actually execute the command
 			result = os.system(movie_script)
 			if (result != 0):
 				logger.error("Movie render command failed :: {0}".format(movie_script))
-			'''
+			
 			# upload the results ?
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
@@ -309,12 +312,12 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			snapshot = this_script.render_snapshot()
 			snapshot_name = snapshot[0]
 			snapshot_script = snapshot[1]
+			
 			# actually execute the command
-			'''
 			result = os.system(snapshot_script)
 			if (result != 0):
 				logger.error("Snapshot render command failed :: {0}".format(snapshot_script))
-			'''
+			
 			# upload the results ?
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)

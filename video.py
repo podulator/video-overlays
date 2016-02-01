@@ -98,6 +98,8 @@ def handle_startup_params():
 		instance_id = boto.utils.get_instance_metadata()['instance-id']
 		if (len(instance_id) > 0):
 			running_on_ec2 = True
+			logger.info("Running on instance id :: {0}".format(instance_id))
+			logger.info("Got user_data params :: {0}".format(params))
 	params = params.strip()
 	if (len(params) == 0):
 		show_help()
@@ -306,7 +308,7 @@ logger.info("Run completed")
 if (len(s3_logs_path) > 0):
 	upload_file_to_S3(log_file, "{0}/{1}".format(s3_logs_path, log_file))
 
-if (running_on_ec2 and config.terminate_on_exit):
+if (running_on_ec2 and config.terminate_on_completion):
 	print "terminating instance :: {}".format(instance_id)
     ec2 = boto.ec2.connect_to_region('eu-west-1')
     ec2.terminate_instances(instance_ids=[instance_id])

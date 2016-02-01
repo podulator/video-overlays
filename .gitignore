@@ -16,3 +16,6 @@
 # materials files
 materials/*
 materials/*.*
+# outputs
+outputs/*
+outputs/*.*

@@ -90,7 +90,7 @@ def upload_file_to_S3(source, destination, make_public = False):
 
 # sort out the start up params from the cli or fall back to user data
 def handle_startup_params():
-	global s3_config_path, s3_logs_path, running_locally, running_on_ec2
+	global s3_config_path, s3_logs_path, running_locally, running_on_ec2, instance_id
 	params = ""
 	if (len(sys.argv) > 1):
 		params = sys.argv[1]

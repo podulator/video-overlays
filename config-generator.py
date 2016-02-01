@@ -20,6 +20,7 @@ config.data_has_headers = True
 config.max_rows = 1
 config.terminate_on_completion = False
 config.s3_destination = "video-transcodes-justgiving-com/my-story/%_PageShortName_%/"
+config.script_file = "template.json"
 
 template = config.to_JSON()
 print (template)

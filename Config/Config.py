@@ -75,6 +75,14 @@ class Config(object):
 		self._s3_destination = value
 
 	@property
+	def script_file(self):
+		return self._script_file
+	
+	@script_file.setter
+	def script_file(self, value):
+		self._script_file = value
+
+	@property
 	def terminate_on_completion(self):
 		return self._terminate_on_completion
 	
@@ -95,6 +103,7 @@ class Config(object):
 		self._data_has_headers = data["_data_has_headers"]
 		self._max_rows = data["_max_rows"]
 		self._s3_destination = data["_s3_destination"]
+		self._script_file = data["_script_file"]
 		self._terminate_on_completion = data["_terminate_on_completion"]
 
 	def __init__(self):
@@ -107,4 +116,5 @@ class Config(object):
 		self._data_has_headers = False
 		self._max_rows = 0
 		self._s3_destination = ""
+		self._script_file = ""
 		self._terminate_on_completion = False

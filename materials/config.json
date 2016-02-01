@@ -8,5 +8,6 @@
     "_data_seperator": "|", 
     "_max_rows": 1, 
     "_s3_destination": "video-transcodes-justgiving-com/my-story/%_PageShortName_%/", 
+    "_script_file": "template.json", 
     "_terminate_on_completion": false
 }

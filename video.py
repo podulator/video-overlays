@@ -24,7 +24,6 @@ s3_logs_path = ""
 cwd = os.getcwd()
 CWD_TOKEN = "%_CWD_%"
 local_materials = "{0}/materials".format(cwd)
-template_file = "{0}/template.json".format(local_materials)
 config_file = "{0}/config.json".format(local_materials)
 log_file = "{}-{}.log".format( gethostname(), datetime.datetime.now().isoformat(' ') )
 log_file = log_file.replace(" ", "-")
@@ -222,7 +221,7 @@ data_seperator = config.data_seperator
 max_rows = config.max_rows
 data_file = "{0}/{1}".format(local_materials, config.data_file)
 data_defintion_file = "{0}/{1}".format(local_materials, config.data_definition_file)
-
+template_file = "{0}/{1}".format(local_materials, config.script_file)
 logger.info("Loading json template from {0}".format(template_file))
 with open(template_file, 'r') as myfile:
 	template = json.loads(myfile.read().strip())
@@ -241,70 +240,73 @@ if (skip_headers and (max_rows > 0)):
 	max_rows += 1
 
 for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
-    if (len(data_row) > 0):
-		if (0 == row_counter):
-			if (len(data_row) != len(tokens)):
-				logger.error("Data definition doesn't match row data")
-				raise ValueError("Data definition doesn't match row data")
-			if (skip_headers):
-				continue
-		if (max_rows > 0 and max_rows <= row_counter):
-			break
-		logger.info("processing row :: {0}".format(row_counter))
+    if (len(data_row) == 0):
+		continue
+	if (len(data_row) != len(tokens)):
+		logger.error("Data definition doesn't match row data")
+		continue
 
-		# load the template as json
-		this_script = FFMPEG()
-		this_script.from_JSON(template)
+	# headers and limits checking
+	if (0 == row_counter and skip_headers):
+		continue
+	if (max_rows > 0 and max_rows <= row_counter):
+		break
+
+	logger.info("processing row :: {0}".format(row_counter))
+
+	# load the template as json
+	this_script = FFMPEG()
+	this_script.from_JSON(template)
 		
-		# we need to work out paths and filenames  for html even if we don't render the movie
-		logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
+	# we need to work out paths and filenames  for html even if we don't render the movie
+	logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
 				
-		# fix input output paths possibly containing tokens
-		this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
-		this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
-		this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
+	# fix input output paths possibly containing tokens
+	this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
+	this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
+	this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
 
-		# swap tokens for data in the template
-		for text_object in this_script.text_objects:
-			text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
-			text_object.content = swap_tokens(tokens, data_row, text_object.content)
+	# swap tokens for data in the template
+	for text_object in this_script.text_objects:
+		text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
+		text_object.content = swap_tokens(tokens, data_row, text_object.content)
 
-		movies = this_script.render_movies()
+	movies = this_script.render_movies()
 
-		if (config.create_movie):
-			# run the command
-			logger.info("Rendering {0} movies".format(len(movies)))
-			for movie in movies:
+	if (config.create_movie):
+		# run the command
+		logger.info("Rendering {0} movies".format(len(movies)))
+		for movie in movies:
 
-				movie_name = movie[0]
-				movie_script = movie[1]
-				# actually execute the command
+			movie_name = movie[0]
+			movie_script = movie[1]
+			# actually execute the command
 				
-				result = os.system(movie_script)
-				if (result != 0):
-					logger.error("Movie render command failed :: {0}".format(movie_script))
+			result = os.system(movie_script)
+			if (result != 0):
+				logger.error("Movie render command failed :: {0}".format(movie_script))
 				
-				# upload the results ?
-				if (len(config.s3_destination) > 0 and running_locally == False):
-					upload_path = swap_tokens(tokens, data_row, config.s3_destination)
-					upload_path = "{0}{1}".format(upload_path, movie_name)
-					logger.info("Uploading movie to :: {0}".format(upload_path))
-					if (not upload_file_to_S3(movie_name, upload_path)):
-						logger.error("Failed to upload movie to :: {0}".format(upload_path))
+			# upload the results ?
+			if (len(config.s3_destination) > 0 and running_locally == False):
+				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+				upload_path = "{0}{1}".format(upload_path, movie_name)
+				logger.info("Uploading movie to :: {0}".format(upload_path))
+				if (not upload_file_to_S3(movie_name, upload_path)):
+					logger.error("Failed to upload movie to :: {0}".format(upload_path))
 					
-					# and delete the local if we're uploading
-					logger.info("Deleting local movie :: {0}".format(movie_name))
-					if (os.path.exists(movie_name)):
-						os.remove(movie_name)
+				# and delete the local if we're uploading
+				logger.info("Deleting local movie :: {0}".format(movie_name))
+				if (os.path.exists(movie_name)):
+					os.remove(movie_name)
 
-			# do we make a snapshot?
-			# this is only possible if we have a rendered movie
-			if (config.create_snapshot):
-				logger.info("Creating snapshot")
-				#print this_script.render_snapshot()
+		# do we make a snapshot?
+		# this is only possible if we have a rendered movie
+		if (config.create_snapshot):
+			logger.info("Creating snapshot")
+			#print this_script.render_snapshot()
 
-		if (config.create_html):
-			logger.info("Creating html")
+	if (config.create_html):
+		logger.info("Creating html")
 
 logger.info("Run completed")
 if (len(s3_logs_path) > 0):

@@ -14,9 +14,10 @@ config.create_html = True
 config.create_movie = True
 config.create_snapshot = True
 config.data_file = "sample.csv"
+config.data_definition_file = "data.definition"
 config.data_seperator = '|'
 config.data_has_headers = True
-config.max_rows = 5
+config.max_rows = 1
 config.terminate_on_completion = False
 config.s3_destination = "video-transcodes-justgiving-com/my-story/%_PageShortName_%/"
 

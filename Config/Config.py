@@ -35,6 +35,14 @@ class Config(object):
 		self._data_file = value
 
 	@property
+	def data_definition_file(self):
+		return self._data_definition_file
+	
+	@data_definition_file.setter
+	def data_definition_file(self, value):
+		self._data_definition_file = value
+
+	@property
 	def data_has_headers(self):
 		return self._data_has_headers
 	
@@ -82,6 +90,7 @@ class Config(object):
 		self._create_movie = data["_create_movie"]
 		self._create_snapshot = data["_create_snapshot"]
 		self._data_file = data["_data_file"]
+		self._data_definition_file = data["_data_definition_file"]
 		self._data_seperator = data["_data_seperator"]
 		self._data_has_headers = data["_data_has_headers"]
 		self._max_rows = data["_max_rows"]
@@ -93,10 +102,9 @@ class Config(object):
 		self._create_movie = True
 		self._create_snapshot = True
 		self._data_file = ""
+		self._data_definition_file = ""
 		self._data_seperator = ","
 		self._data_has_headers = False
 		self._max_rows = 0
 		self._s3_destination = ""
 		self._terminate_on_completion = False
-
-

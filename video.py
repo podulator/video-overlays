@@ -24,7 +24,6 @@ s3_logs_path = ""
 cwd = os.getcwd()
 CWD_TOKEN = "%_CWD_%"
 local_materials = "{0}/materials".format(cwd)
-tokenlist_file = "{0}/data.definition".format(local_materials)
 template_file = "{0}/template.json".format(local_materials)
 config_file = "{0}/config.json".format(local_materials)
 log_file = "{}-{}.log".format( gethostname(), datetime.datetime.now().isoformat(' ') )
@@ -222,14 +221,15 @@ skip_headers = config.data_has_headers
 data_seperator = config.data_seperator
 max_rows = config.max_rows
 data_file = "{0}/{1}".format(local_materials, config.data_file)
+data_defintion_file = "{0}/{1}".format(local_materials, config.data_definition_file)
 
 logger.info("Loading json template from {0}".format(template_file))
 with open(template_file, 'r') as myfile:
 	template = json.loads(myfile.read().strip())
 logger.info("Loaded json template")
 
-logger.info("Loading token list from {0}".format(tokenlist_file))
-tokens = LoadTokenList(tokenlist_file)
+logger.info("Loading token list from {0}".format(data_defintion_file))
+tokens = LoadTokenList(data_defintion_file)
 logger.info("Loaded {0} tokens".format( len( tokens ) ) )
 
 '''

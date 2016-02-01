@@ -219,7 +219,7 @@ try:
 	# get s3 materials if they're specified and we're not running locally
 	if (len(config.s3_materials) > 0 and not running_locally):
 
-		remote_bucket, remote_path_root = get_bucket_and_path_from_s3_url(s3_config_path)
+		remote_bucket, remote_path_root = get_bucket_and_path_from_s3_url(config.s3_materials)
 		remote_path_root_length = len(remote_path_root)
 
 		logger.info("Downloading materials from bucket :: {0}".format(remote_bucket))

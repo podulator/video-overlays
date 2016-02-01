@@ -121,7 +121,7 @@ def handle_startup_params():
 			else:
 				s3_config_path = param_parts[0]
 				s3_logs_bucket, discard_path = get_bucket_and_path_from_s3_url(s3_config_path)
-				s3_logs_path = "{0}/video_logs/".format(s3_logs_bucket)
+				s3_logs_path = "{0}/video_render_logs".format(s3_logs_bucket)
 	logger.debug("s3_config_path = {0}".format(s3_config_path))
 	logger.debug("s3_logs_path = {0}".format(s3_logs_path))
 

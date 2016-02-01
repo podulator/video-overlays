@@ -8,9 +8,9 @@
     "_data_seperator": "|", 
     "_html_output_file": "index.html", 
     "_html_template": "template.html", 
-    "_max_rows": 5, 
+    "_max_rows": 10, 
     "_s3_destination": "video-transcodes-justgiving-com/my-story/%_PageShortName_%/", 
     "_s3_materials": "video-transcodes-justgiving-com/config/materials", 
     "_script_file": "template.json", 
-    "_terminate_on_completion": false
+    "_terminate_on_completion": true
 }

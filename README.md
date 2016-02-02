@@ -10,8 +10,10 @@ overlay images and text on a video from a data csv and an ffmpeg powering script
   * a source movie in the materials folder
   * optionally, an html template in the materials folder
   * optionally, fonts for ffmpeg to use, in the materials folder
+
 ## Running the transcoder
 There are two ways to kick off the tool, 
+
 1. from the cli
 ```bash
 ./video.py s3_bucket/path/to/config.json
@@ -24,10 +26,23 @@ There are two ways to kick off the tool,
     * local logs won't be deleted
 
 2. or falling back to user_data set at ec2 launch time which only supports the bucket config option, so your user data would look like :: s3_bucket/path/to/config.json
+
 #### Supporting files
   * create_config.py :: renders a valid json config file from code
   * create_template.py :: renders a valid json script file from code
 
+## Running as a render farm
+The application has been designed to run on ec2 as a render farm to reduce total render time. To make the process parallelisable on n machines, follow these steps
+1.) Create a matching data.defintion file for your data csv file
+2.) Create a working script file
+3.) Prove it works how you want, maybe by setting config._max_rows = 1
+4.) Partition your data files into n seperate files, eg. data1.csv, data2.csv, data3.csv
+5.) Set config._terminate_on_completion = true
+5.) Copy the config file n times, keeping it all the same as the original one, except pointing the config._data_file at a matching csv file
+  * config1.json -> _data_file = data1.csv
+  * config2.json -> _data_file = data2.csv
+  * etc
+6.) Launch n ec2 instances, each with user_data pointing at its own config.json file
 # File Definitions
 ### The JSON Config File
 ```javascript

@@ -321,7 +321,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			# upload the results ?
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
-				upload_path = "{0}{1}".format(upload_path, movie_name)
+				upload_path = "{0}/{1}".format(upload_path, movie_name)
 				logger.info("Uploading movie to :: {0}".format(upload_path))
 				if (not upload_file_to_S3("{0}/{1}".format(local_output, movie_name), upload_path, True)):
 					logger.error("Failed to upload movie to :: {0}".format(upload_path))
@@ -343,7 +343,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			# upload the results ?
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
-				upload_path = "{0}{1}".format(upload_path, snapshot_name)
+				upload_path = "{0}/{1}".format(upload_path, snapshot_name)
 				logger.info("Uploading snapshot to :: {0}".format(upload_path))
 				if (not upload_file_to_S3(snapshot_local_path, upload_path, True)):
 					logger.error("Failed to upload snapshot to :: {0}".format(upload_path))
@@ -379,7 +379,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 		# upload to s3?
 		if (len(config.s3_destination) > 0 and running_locally == False):
 			upload_path = swap_tokens(tokens, data_row, config.s3_destination)
-			upload_path = "{0}{1}".format(upload_path, html_output_name)
+			upload_path = "{0}/{1}".format(upload_path, html_output_name)
 			logger.info("Uploading html to :: {0}".format(upload_path))
 			if (not upload_file_to_S3(html_local_destination, upload_path, True)):
 				logger.error("Failed to upload html to :: {0}".format(upload_path))

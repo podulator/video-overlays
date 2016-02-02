@@ -20,7 +20,6 @@ from FFMPEG import FFMPEG
 from Config import Config
 
 s3_config_path = ""
-s3_logs_path = ""
 cwd = os.getcwd()
 CWD_TOKEN = "%_CWD_%"
 local_materials = "{0}/materials".format(cwd)
@@ -39,11 +38,10 @@ def setDebugLevel(val):
 
 def show_help():
 	path = sys.argv[0]
-	print "run as {0} [ -help or -local or S3ConfigFileUrl or S3ConfigFileUrl:S3LogsURL ]".format(path)
+	print "run as {0} [ -help or -local or S3ConfigFileUrl ]".format(path)
 	print "-help :: show this help"
-	print "-local :: assume all materials alreaady exist under ./materials/"
-	print "S3ConfigFileUrl :: The full bucket name and path to a valid config file. Logs will be stored in derived bucketname/video_logs"
-	print "S3ConfigFileUrl:S3LogsURL :: Full bucket name and path for both a config file and logs, colon seperated"
+	print "-local :: assume all materials alreaady exist under {0}/materials/".format(cwd)
+	print "S3ConfigFileUrl :: The full bucket name and path to a valid config file. Logs will be stored in materials bucketname/video_render_logs"
 	print ""
 
 def purge(dir, pattern):
@@ -90,7 +88,7 @@ def upload_file_to_S3(source, destination, make_public = False):
 
 # sort out the start up params from the cli or fall back to user data
 def handle_startup_params():
-	global s3_config_path, s3_logs_path, running_locally, running_on_ec2, instance_id
+	global s3_config_path, running_locally, running_on_ec2, instance_id
 	params = ""
 	if (len(sys.argv) > 1):
 		params = sys.argv[1]

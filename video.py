@@ -114,16 +114,9 @@ def handle_startup_params():
 		elif (params == "-local"):
 			running_locally = True
 		else:
-			param_parts = params.split(":")
-			if (len(param_parts) >= 2):
-				s3_config_path = param_parts[0]
-				s3_logs_path = param_parts[1]
-			else:
-				s3_config_path = param_parts[0]
-				s3_logs_bucket, discard_path = get_bucket_and_path_from_s3_url(s3_config_path)
-				s3_logs_path = "{0}/video_render_logs".format(s3_logs_bucket)
+			s3_config_path = params
+
 	logger.debug("s3_config_path = {0}".format(s3_config_path))
-	logger.debug("s3_logs_path = {0}".format(s3_logs_path))
 
 def LoadTokenList(data_file):
 	global data_seperator
@@ -388,8 +381,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			if (os.path.exists(html_local_destination)):
 				os.remove(html_local_destination)
 
-if (len(s3_logs_path) > 0):
-	log_file_path = "{0}/{1}".format(s3_logs_path, log_file)
+if (not running_locally):
+	log_file_path = "{0}/{1}".format(config.s3_logs, log_file)
 	logger.info("Uploading log to :: {0}".format(log_file_path))
 	upload_file_to_S3(log_file, log_file_path)
 

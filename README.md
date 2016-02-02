@@ -3,6 +3,13 @@ overlay images and text on a video from a data csv and an ffmpeg powering script
 ## Requirements
   * sudo apt-get install ffmpeg python python-pip python-urllib3
   * sudo pip install boto beautifulsoup
+  * a valid config file, defined below
+  * a valid script file in the materials folder, described below
+  * a valid data definition file in the materials folder, described below
+  * a valid data file in the materials folder, described below
+  * a source movie in the materials folder
+  * optionally, an html template in the materials folder
+  * optionally, fonts for ffmpeg to use, in the materials folder
 ## Running the transcoder
 There are two ways to kick off the tool, 
 1. from the cli
@@ -32,6 +39,7 @@ There are two ways to kick off the tool,
     "_html_template": "template.html", 
     "_max_rows": 10, 
     "_s3_destination": "video-transcodes-justgiving-com/my-story/%_PageShortName_%", 
+    "_s3_logs": "video-transcodes-justgiving-com/video_render_logs", 
     "_s3_materials": "video-transcodes-justgiving-com/config/materials", 
     "_script_file": "template.json", 
     "_terminate_on_completion": false

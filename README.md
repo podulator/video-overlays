@@ -1,6 +1,8 @@
 # video-overlays
 overlay images and text on a video from a data csv and an ffmpeg powering script
-
+## Requirements
+  * sudo apt-get install ffmpeg python python-pip python-urllib3
+  * sudo pip install boto beautifulsoup
 ## Running the transcoder
 There are two ways to kick off the tool, 
 1. from the cli

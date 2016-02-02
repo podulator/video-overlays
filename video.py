@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # requires 
-# urllib3, python-pip
+# apt-get install ffmpeg python python-urllib3, python-pip
 # pip install boto BeautifulSoup
 
 import csv

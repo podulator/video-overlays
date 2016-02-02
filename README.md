@@ -1,5 +1,5 @@
 # video-overlays
-overlay images and text on a video from csv and ffmpeg script
+overlay images and text on a video from a data csv and an ffmpeg powering script
 
 ## Running the transcoder
 There are two ways to kick off the tool, 
@@ -9,10 +9,10 @@ There are two ways to kick off the tool,
 ./video.py -local
 ./video.py -help
 ```
-* -local won't down or upload anything, so 
-  * all supporting files are assumed ot be in place already, with a ./config.json file in place, and all materials under ./materials/
-  * local files won't be deleted, they'll be left in ./outputs/
-  * local logs won't be deleted
+  * -local won't down or upload anything, so 
+    * all supporting files are assumed ot be in place already, with a ./config.json file in place, and all materials under ./materials/
+    * local files won't be deleted, they'll be left in ./outputs/
+    * local logs won't be deleted
 
 2. or falling back to user_data set at ec2 launch time which only supports the bucket config option, so your user data would look like :: s3_bucket/path/to/config.json
 
@@ -46,6 +46,7 @@ There are two ways to kick off the tool,
 *   _html_template :: the name of the html template file. Tokens are replaced
 *   _max_rows :: how much data to process, zero means all
 *   _s3_destination :: where to upload all cretaed assets to. Tokens are replaced
+*   _s3_logs :: where to upload the log file to. If empty it becomes s3_materials bucket /video_render_logs/
 *   _s3_materials :: where to get all the materials from. Downloaded to ./materials/
 *   _script_file :: JSON file describing what to draw, when and where
 *   _terminate_on_completion :: should the ec2 box suicide when done

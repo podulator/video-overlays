@@ -99,6 +99,14 @@ class Config(object):
 		self._s3_materials = value
 
 	@property
+	def s3_logs(self):
+		return self._s3_logs if (len(self._s3_logs) > 0) else "{0}/video_render_logs".format(self._s3_materials.split("/")[0])
+	
+	@s3_logs.setter
+	def s3_logs(self, value):
+		self._s3_logs = value
+
+	@property
 	def script_file(self):
 		return self._script_file
 	
@@ -129,6 +137,7 @@ class Config(object):
 		self._html_template = data["_html_template"]
 		self._max_rows = data["_max_rows"]
 		self._s3_destination = data["_s3_destination"]
+		self._s3_logs = data["_s3_logs"]
 		self._s3_materials = data["_s3_materials"]
 		self._script_file = data["_script_file"]
 		self._terminate_on_completion = data["_terminate_on_completion"]
@@ -145,6 +154,7 @@ class Config(object):
 		self._html_template = ""
 		self._max_rows = 0
 		self._s3_destination = ""
+		self._s3_logs = ""
 		self._s3_materials = ""
 		self._script_file = ""
 		self._terminate_on_completion = False

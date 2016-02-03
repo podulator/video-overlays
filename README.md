@@ -101,7 +101,7 @@ This is a csv file, comma seperated, containing the list of tokens in the same o
 ### The Script File - Required always
 ```javascript
 {
-    "_destination_movie": "%_FundraiserGuid_%", 
+    "_destination_movie": "%_A_Token_%", 
     "_output_path_prefix": "", 
     "_image_objects": [], 
     "_input_flags": "-strict -2", 
@@ -115,9 +115,9 @@ This is a csv file, comma seperated, containing the list of tokens in the same o
 			"_flags": "-c:v libvpx -quality good -cpu-used 5 -qmin 10 -qmax 42 -crf 18 -b:v 1M -c:a libvorbis -threads 8"
 		}
     ],
-    "_snapshot_name": "%_FundraiserGuid_%.png", 
+    "_snapshot_name": "%_A_Token_%.png", 
     "_snapshot_timestamp": "00:00:03.123", 
-    "_source_movie": "%_CWD_%/materials/JG 008 Animatic with TEXTLESS.mp4", 
+    "_source_movie": "%_CWD_%/materials/source.mp4", 
     "_text_objects": [
         {
             "_alpha": 1.0, 
@@ -130,7 +130,7 @@ This is a csv file, comma seperated, containing the list of tokens in the same o
                 "_opacity": 1.0
             }, 
             "_clean_content": true, 
-            "_content": "Good luck %_FirstName_%", 
+            "_content": "A message %_A_Token_%", 
             "_fallback_content": "", 
             "_content_dirty": true, 
             "_content_max_length": 0, 
@@ -144,7 +144,7 @@ This is a csv file, comma seperated, containing the list of tokens in the same o
                 "_alpha": 1.0, 
                 "_colour": "black", 
                 "_family": null, 
-                "_file": "%_CWD_%/materials/roboto_ttf/Roboto-Light.ttf", 
+                "_file": "%_CWD_%/materials/path/to/your_font.ttf", 
                 "_size": 80
             }, 
             "_frame_from": 0, 

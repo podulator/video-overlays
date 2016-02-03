@@ -99,7 +99,7 @@ It can have headers, skipable by setting _data_has_headers to true in the config
 This is a csv file, comma seperated, containing the list of tokens in the same order as the data columns. 
 The column count must match the _data_file column count. 
 Tokens will be swapped for data for each row in the html template file, and in the script file for content and font file paths. 
-There is a magic token appended to the end of this list, and every data row, %_CWD_%, which is the current directory, so paths can be fully qualified to the ./materials/ directory for fonts etc, as required by FFMPEG.
+There is a magic token appended to the end of this list, and every data row, %\_CWD\_%, which is the current directory, so paths can be fully qualified to the ./materials/ directory for fonts etc, as required by FFMPEG.
 
 ### The Script File - Required always
 ```javascript

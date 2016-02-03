@@ -21,8 +21,8 @@ There are two ways to kick off the tool,
 ./video.py -help
 ```
   * -local won't down or upload anything, so 
-    * all supporting files are assumed ot be in place already, with a ./config.json file in place, and all materials under ./materials/
-    * local files won't be deleted, they'll be left in ./outputs/
+    * all supporting files are assumed to be in place already, with a ./config.json file, and all materials under ./materials/
+    * local files won't be deleted, they'll be left in ./outputs/. Any files with non-unique names will be overwritten in this mode
     * local logs won't be deleted
 
 2.) or falling back to user_data set at ec2 launch time which only supports the bucket config option, so your user data would look like :: s3_bucket/path/to/config.json

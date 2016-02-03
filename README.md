@@ -66,9 +66,9 @@ The application has been designed to run on ec2 as a render farm to reduce total
     "_html_output_file": "index.html", 
     "_html_template": "template.html", 
     "_max_rows": 10, 
-    "_s3_destination": "video-transcodes-justgiving-com/my-story/%_PageShortName_%", 
-    "_s3_logs": "video-transcodes-justgiving-com/video_render_logs", 
-    "_s3_materials": "video-transcodes-justgiving-com/config/materials", 
+    "_s3_destination": "your_bucket_name/path/%_A_Token_%", 
+    "_s3_logs": "your_bucket_name/video_render_logs", 
+    "_s3_materials": "your_bucket_name/config/materials", 
     "_script_file": "template.json", 
     "_terminate_on_completion": false
 }

@@ -28,8 +28,8 @@ There are two ways to kick off the tool,
 2.) or falling back to user_data set at ec2 launch time which only supports the bucket config option, so your user data would look like :: s3_bucket/path/to/config.json
 
 #### Supporting files
-  * create_config.py :: renders a valid json config file from code
-  * create_template.py :: renders a valid json script file from code
+  * config_generator.py :: renders a valid json config file from code
+  * template_generator.py :: renders a valid json script file from code
 
 ## Running as a render farm
 The application has been designed to run on ec2 as a render farm to reduce total render time. To make the process parallelisable on n machines, follow these steps

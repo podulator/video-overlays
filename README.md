@@ -178,7 +178,7 @@ There is a magic token appended to the end of this list, and every data row, %_C
   * _content_max_length :: truncate to this length if we exceed. Zero means no truncate
   * _drop_shadow :: if we draw a drop shadow this defines it
   * _fix_bounds :: if true we try and force text to stay on the screen
-  * _font :: this defines the font to use. _file tokens are replaced. ie. %_CWD_%/materials/path/to/font.ttf
+  * _font :: this defines the font to use. Any _file tokens are replaced. ie. %_CWD_%/materials/path/to/font.ttf
   * _frame_from :: when does the text appear
   * _frame_to :: when does the text disappear
   * _line_length_max :: split to new line if we exceed this length. Don't split on zero

@@ -43,7 +43,9 @@ The application has been designed to run on ec2 as a render farm to reduce total
   * config2.json -> _data_file = data2.csv
   * etc
 6.) Launch n ec2 instances, each with user_data pointing at its own config.json file
+
 # File Definitions
+
 ### The JSON Config File
 ```javascript
 {

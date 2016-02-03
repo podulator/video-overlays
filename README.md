@@ -14,7 +14,7 @@ overlay images and text on a video from a data csv and an ffmpeg powering script
 ## Running the transcoder
 There are two ways to kick off the tool, 
 
-1. from the cli
+1.) from the cli
 ```bash
 ./video.py s3_bucket/path/to/config.json
 ./video.py -local
@@ -25,7 +25,7 @@ There are two ways to kick off the tool,
     * local files won't be deleted, they'll be left in ./outputs/
     * local logs won't be deleted
 
-2. or falling back to user_data set at ec2 launch time which only supports the bucket config option, so your user data would look like :: s3_bucket/path/to/config.json
+2.) or falling back to user_data set at ec2 launch time which only supports the bucket config option, so your user data would look like :: s3_bucket/path/to/config.json
 
 #### Supporting files
   * create_config.py :: renders a valid json config file from code

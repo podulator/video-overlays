@@ -65,6 +65,8 @@ The application has been designed to run on ec2 as a render farm to reduce total
     "_data_seperator": "|", 
     "_html_output_file": "index.html", 
     "_html_template": "template.html", 
+    "_iframe_template": "iframe-template.html", 
+    "_iframe_output_file": "iframe-index.html", 
     "_max_rows": 10, 
     "_s3_destination": "your_bucket_name/path/%_A_Token_%", 
     "_s3_logs": "your_bucket_name/video_render_logs", 
@@ -82,6 +84,8 @@ The application has been designed to run on ec2 as a render farm to reduce total
 *   _data_seperator :: sets if it's comma, tab or pipe seperated data
 *   _html_output_file :: the name of the generated html file. Tokens are replaced
 *   _html_template :: the name of the html template file. Tokens are replaced
+*   _iframe_template :: the name of the iframe template for twitter etc. Tokens are replaced
+*   _iframe_output_file :: the name of the generated iframe file. Tokens are replaced 
 *   _max_rows :: how much data to process, zero means all
 *   _s3_destination :: where to upload all cretaed assets to. Tokens are replaced
 *   _s3_logs :: where to upload the log file to. If empty it becomes s3_materials bucket /video_render_logs/

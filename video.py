@@ -247,11 +247,18 @@ logger.info("Loaded {0} tokens".format( len( tokens ) ) )
 
 if (config.create_html):
 	html_template_path = "{0}/{1}".format(local_materials, config.html_template)
-	logger.info("Loading html template from {0}".format(html_template_path))
-	with open(html_template_path, 'r') as f:
-		html_template = f.read().strip()
-	logger.info("Loaded html template")
+	if (os.path.exists(html_template_path)):
+		logger.info("Loading html template from {0}".format(html_template_path))
+		with open(html_template_path, 'r') as f:
+			html_template = f.read().strip()
+		logger.info("Loaded html template")
 
+	iframe_template_path =  "{0}/{1}".format(local_materials, config.iframe_template)
+	if (os.path.exists(iframe_template_path)):
+		logger.info("Loading iframe template from {0}".format(iframe_template_path))
+		with open(iframe_template_path, 'r') as f:
+			iframe_template = f.read().strip()
+		logger.info("Loaded iframe template")
 '''
 config loading ends
 '''
@@ -379,6 +386,34 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			if (os.path.exists(html_local_destination)):
 				os.remove(html_local_destination)
 
+	# iframe template?
+	if (config.create_html and len(config.iframe_output_file) > 0):
+
+		logger.info("Creating iframe html")
+		iframe_output_name = swap_tokens(tokens, data_row, config.iframe_output_file)
+		this_iframe_template = swap_tokens(tokens, data_row, iframe_template)
+		iframe_local_destination = "{0}/{1}".format(local_output, iframe_output_name)
+		# clean up first to be super sure we don't ever upload the wrong personalised file for someone
+		if (os.path.exists(iframe_local_destination)):
+			os.remove(iframe_local_destination)
+		
+		# write the transformed template back out
+		with open(iframe_local_destination, "w") as f:
+			f.write(this_iframe_template)
+
+		# upload to s3?
+		if (len(config.s3_destination) > 0 and running_locally == False):
+			upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+			upload_path = "{0}/{1}".format(upload_path, iframe_output_name)
+			logger.info("Uploading iframe to :: {0}".format(upload_path))
+			if (not upload_file_to_S3(iframe_local_destination, upload_path, True)):
+				logger.error("Failed to upload iframe to :: {0}".format(upload_path))
+					
+			# delete local copy?
+			if (os.path.exists(iframe_local_destination)):
+				os.remove(iframe_local_destination)
+
+		
 if (not running_locally):
 	log_file_path = "{0}/{1}".format(config.s3_logs, log_file)
 	logger.info("Uploading log to :: {0}".format(log_file_path))

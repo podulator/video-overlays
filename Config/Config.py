@@ -75,6 +75,22 @@ class Config(object):
 		self._html_template = value
 
 	@property
+	def iframe_template(self):
+		return self._iframe_template
+	
+	@iframe_template.setter
+	def iframe_template(self, value):
+		self._iframe_template = value
+	
+	@property
+	def iframe_output_file(self):
+		return self._iframe_output_file
+	
+	@iframe_output_file.setter
+	def iframe_output_file(self, value):
+		self._iframe_output_file = value
+
+	@property
 	def max_rows(self):
 		return self._max_rows
 	
@@ -135,6 +151,8 @@ class Config(object):
 		self._data_has_headers = data["_data_has_headers"]
 		self._html_output_file = data["_html_output_file"]
 		self._html_template = data["_html_template"]
+		self._iframe_template = data["_iframe_template"]
+		self._iframe_output_file = data["_iframe_output_file"]
 		self._max_rows = data["_max_rows"]
 		self._s3_destination = data["_s3_destination"]
 		self._s3_logs = data["_s3_logs"]
@@ -152,6 +170,8 @@ class Config(object):
 		self._data_has_headers = False
 		self._html_output_file = ""
 		self._html_template = ""
+		self._iframe_template = ""
+		self._iframe_output_file = ""
 		self._max_rows = 0
 		self._s3_destination = ""
 		self._s3_logs = ""

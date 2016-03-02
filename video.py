@@ -18,6 +18,10 @@ import datetime
 from FFMPEG import DrawText
 from FFMPEG import FFMPEG
 from Config import Config
+import ssl
+
+if hasattr(ssl, '_create_unverified_context'):
+   ssl._create_default_https_context = ssl._create_unverified_context
 
 s3_config_path = ""
 cwd = os.getcwd()
@@ -70,6 +74,7 @@ def upload_file_to_S3(source, destination, make_public = False):
 		# strip trailing slash
 		path = path[:-1]
 		logger.debug("Connecting to bucket :: {}".format(bucket_name))
+		
 		conn = S3Connection()
 		bucket = conn.get_bucket(bucket_name)
 		logger.debug("Setting key :: {0}".format(path))
@@ -185,6 +190,7 @@ try:
 		config_key = config_key[:-1]
 		logger.info("Downloading config from bucket :: {0}".format(config_bucket))
 		s3_conn = boto.connect_s3()
+		
 		bucket = s3_conn.get_bucket(config_bucket)
 		key = bucket.get_key(config_key)
 		logger.info("Downloading config file {0} to {1}".format(config_key, config_file))

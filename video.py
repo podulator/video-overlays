@@ -20,6 +20,7 @@ from FFMPEG import FFMPEG
 from Config import Config
 import ssl
 
+# workaround buckets with periods in their name
 if hasattr(ssl, '_create_unverified_context'):
    ssl._create_default_https_context = ssl._create_unverified_context
 

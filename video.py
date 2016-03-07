@@ -142,11 +142,17 @@ def CsvDataIterator(data_file):
 			yield row
 
 def swap_tokens(tokens, data_row, content):
-	logger.debug("Looking for tokens in :: {0}".format(content))
+	try:
+		logger.debug("Looking for tokens in :: {0}".format(content))
+	except UnicodeEncodeError:
+		logger.debug(u"Looking for tokens in :: {0}".format(content))
 	for token_counter, token in enumerate(tokens):
 		if (None != re.search(token, content)):
 			data = data_row[token_counter]
-			logger.debug("swapping out token :: {0} for data :: '{1}'".format(token, data))
+			try:
+				logger.debug("swapping out token :: {0} for data :: '{1}'".format(token, data))
+			except UnicodeEncodeError:
+				logger.debug(u"swapping out token :: {0} for data :: '{1}'".format(token, data))
 			content = re.sub(token, data, content)
 
 	return content

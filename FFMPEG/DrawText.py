@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-15 -*-
 from Renderable import Renderable
 from Box import Box
 from Font import Font
@@ -25,7 +26,7 @@ class DrawText(Renderable):
 		content = re.sub('}', '\\}', content)
 		content = re.sub(':', '\\:', content)
 		content = re.sub('!', '\\!', content)
-		content = re.sub('\'', '', content)
+		content = re.sub('\'', u'’', content)
 		
 		return content
 

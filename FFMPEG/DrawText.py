@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 from Renderable import Renderable
 from Box import Box
 from Font import Font
@@ -8,6 +8,7 @@ import re
 import textwrap
 from BeautifulSoup import BeautifulSoup
 from BeautifulSoup import BeautifulStoneSoup
+import HTMLParser
 
 class DrawText(Renderable):
 
@@ -18,17 +19,22 @@ class DrawText(Renderable):
 		return (self._content[:self._content_max_length - 3] + '...') if len(self._content) > self._content_max_length else self._content
 
 	def scrub(self, content):
-		content = BeautifulSoup(content).getText()
-		content = unicode(BeautifulStoneSoup(content, convertEntities=BeautifulStoneSoup.HTML_ENTITIES))
-		content = content.encode("utf-8")
-		content = re.sub('%', '\\\\\\\\\\%', content)
-		content = re.sub('{', '\\{', content)
-		content = re.sub('}', '\\}', content)
-		content = re.sub(':', '\\:', content)
-		content = re.sub('!', '\\!', content)
-		content = re.sub('\'', u'’', content)
-		
-		return content
+		# grab dirty content and do a fault tolerant clean
+		contents = BeautifulStoneSoup(BeautifulSoup(content).getText(), convertEntities=BeautifulStoneSoup.HTML_ENTITIES).contents
+		mycontent = "".join(unicode(item) for item in contents)
+		# remove any html entities cleanly
+		h = HTMLParser.HTMLParser()
+		mycontent = h.unescape(mycontent)
+		mycontent = re.sub('%', '\\\\\\\\\\%', mycontent)
+		mycontent = re.sub('{', '\\{', mycontent)
+		mycontent = re.sub('}', '\\}', mycontent)
+		mycontent = re.sub(':', '\\:', mycontent)
+		mycontent = re.sub(';', '\\;', mycontent)
+		mycontent = re.sub('!', '\\!', mycontent)
+		mycontent = re.sub('\.', '\\.', mycontent)
+		mycontent = re.sub('`', '\\`', mycontent)
+		mycontent = re.sub('\'', u'’', mycontent)
+		return mycontent.encode("utf8", "ignore")
 
 	def render_x(self):
 		my_x = str(self._x)

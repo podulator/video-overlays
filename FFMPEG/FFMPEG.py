@@ -104,26 +104,41 @@ class FFMPEG(object):
 
 	def from_JSON(self, data):
 
-		self.source_movie = data["_source_movie"]
-		self.destination_movie = data["_destination_movie"]
-		self.snapshot_timestamp = data["_snapshot_timestamp"]
-		self._snapshot_name = data["_snapshot_name"]
-		self._input_flags = data["_input_flags"]
-		self._output_path_prefix = data["_output_path_prefix"]
+		if ("_source_movie" in data):
+			self.source_movie = data["_source_movie"]
+		
+		if ("_destination_movie" in data):
+			self.destination_movie = data["_destination_movie"]
+		
+		if ("_snapshot_timestamp" in data):
+			self.snapshot_timestamp = data["_snapshot_timestamp"]
+		
+		if ("_snapshot_name" in data):
+			self._snapshot_name = data["_snapshot_name"]
+		
+		if ("_input_flags" in data):
+			self._input_flags = data["_input_flags"]
+		
+		if ("_output_path_prefix" in data):
+			self._output_path_prefix = data["_output_path_prefix"]
 
-		for text_object in data["_text_objects"]:
-			drawtext = DrawText()
-			drawtext.from_JSON(text_object)
-			self._text_objects.append(drawtext)
-		for image_object in data["_image_objects"]:
-			image = DrawImage()
-			image.from_JSON(image_object)
-			self._image_objects.append(image)
+		if ("_text_objects" in data):
+			for text_object in data["_text_objects"]:
+				drawtext = DrawText()
+				drawtext.from_JSON(text_object)
+				self._text_objects.append(drawtext)
+		
+		if ("_image_objects" in data):
+			for image_object in data["_image_objects"]:
+				image = DrawImage()
+				image.from_JSON(image_object)
+				self._image_objects.append(image)
 
-		for encoder_object in data["_output_encoders"]:
-			encoder = Encoder()
-			encoder.from_JSON(encoder_object)
-			self._output_encoders.append(encoder)
+		if ("_output_encoders" in data):
+			for encoder_object in data["_output_encoders"]:
+				encoder = Encoder()
+				encoder.from_JSON(encoder_object)
+				self._output_encoders.append(encoder)
 
 	def __init__(self, source = "", destination = ""):
 		

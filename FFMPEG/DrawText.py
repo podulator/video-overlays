@@ -12,6 +12,19 @@ import HTMLParser
 
 class DrawText(Renderable):
 
+	def explode_lines_to_max_line_length(self, text, max_line_length):
+		result = []
+		if (max_line_length == 0):
+			#print "zero length so not splitting"
+			result.append(text)
+		elif (len(text) <= max_line_length):
+			#print "text less than line length so not splitting"
+			result.append(text)
+		else:
+			#print "splitting"
+			result = textwrap.wrap(text, max_line_length)
+		return result
+
 	def fix_line_length(self):
 		return '\n'.join(textwrap.wrap(self._content, self._line_max_length))
 
@@ -66,9 +79,6 @@ class DrawText(Renderable):
 			if (self._content_max_length > 0 and self._content_max_length < len(self.content)):
 				self.content = self.fix_content_length()
 				#print "content shortened to {0} because longer than {1}".format(self._content, self._content_max_length)
-			if (self._line_max_length > 0 and self._line_max_length < len(self.content)):
-				self.content = self.fix_line_length()
-				#print "content split to {0} because lines longer than {1}".format(self._content, self._line_max_length)
 
 		self._content_dirty = False
 
@@ -80,21 +90,40 @@ class DrawText(Renderable):
 		if (self.fix_bounds):
 			bounds = ": fix_bounds=1"
 
-		main = "text='{0}': x={1}: y={2}: alpha={3}{4}{5}".format(   
-																	self.content, 
-																	self.render_x(), 
-																	self.render_y(), 
+		#print "content is :: {0}".format(self.content)
+		lines = self.explode_lines_to_max_line_length(self.content, self.line_max_length)
+		#print "lines are :: {0}".format(lines)
+		
+		all_x = self.render_x()
+		all_y = self.render_y()
+		results = []
+		for index, line in enumerate(lines):
+			#print "processing line - index :: {0} - {1}".format(line, index)
+			if (index == 0):
+				current_y = all_y
+			else:
+				current_y = "{0}+({1}*text_h)+({1}*{2})".format(all_y, index, self.vertical_padding)
+				
+			#print "current-y == {0}".format(current_y)
+			body = "text='{0}': x={1}: y={2}: alpha={3}{4}{5}".format(   
+																	line, 
+																	all_x, 
+																	current_y, 
 																	self.alpha, 
 																	border, 
 																	bounds)
 
-		return "{0}=\"{1}{2}{3}{4}{5}\"".format(
+			full_line = "{0}=\"{1}{2}{3}{4}{5}\"".format(
 										self.object_type, 
-										main, 
+										body, 
 										str(self.font), 
 										str(self.drop_shadow), 
 										str(self.box), 
 										self.enabled())
+			
+			results.append(full_line)
+		
+		return ",\\\n".join(results)
 
 	@property
 	def content(self):
@@ -265,7 +294,7 @@ class DrawText(Renderable):
 		self.clean_content = False
 		self.content_max_length = 0
 		self.line_max_length = 0
-		self._vertical_padding = "(text_h/5)"
+		self._vertical_padding = "text_h/5"
 
 		# origin is top left
 		self.x = 0

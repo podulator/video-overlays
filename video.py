@@ -306,145 +306,147 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 		logger.error("Data definition doesn't match row data for row :: {0}".format(row_counter))
 		continue
 
-	# headers and limits checking
-	if (0 == row_counter and skip_headers):
-		continue
-	if (max_rows > 0 and max_rows <= row_counter):
-		break
+	try:
+		# headers and limits checking
+		if (0 == row_counter and skip_headers):
+			continue
+		if (max_rows > 0 and max_rows <= row_counter):
+			break
 
-	logger.info("processing row :: {0}".format(row_counter))
+		logger.info("processing row :: {0}".format(row_counter))
 
-	if (config.create_movie):
+		if (config.create_movie):
 
-		# load the template as json
-		this_script = FFMPEG()
-		this_script.from_JSON(template)
-		this_script.output_path_prefix = local_output
-		
-		# we need to work out paths and filenames  for html even if we don't render the movie
-		logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
-					
-		# fix input output paths possibly containing tokens
-		this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
-		this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
-		this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
-
-		# swap tokens for data in the template
-		for text_object in this_script.text_objects:
-			text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
-			text_object.content = swap_tokens(tokens, data_row, text_object.content)
-
-		movies = this_script.render_movies()
-
-		# run the command
-		logger.info("Rendering {0} movies".format(len(movies)))
-		for movie in movies:
-
-			movie_name = movie[0]
-			movie_script = movie[1]
+			# load the template as json
+			this_script = FFMPEG()
+			this_script.from_JSON(template)
+			this_script.output_path_prefix = local_output
 			
-			# actually execute the command
-			result = os.system(movie_script)
-			if (result != 0):
-				logger.error("Movie render command failed :: {0}".format(movie_script))
-			
-			# upload the results ?
-			if (len(config.s3_destination) > 0 and running_locally == False):
-				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
-				upload_path = "{0}/{1}".format(upload_path, movie_name)
-				logger.info("Uploading movie to :: {0}".format(upload_path))
-				if (not upload_file_to_S3("{0}/{1}".format(local_output, movie_name), upload_path, True)):
-					logger.error("Failed to upload movie to :: {0}".format(upload_path))
+			# we need to work out paths and filenames  for html even if we don't render the movie
+			logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
+						
+			# fix input output paths possibly containing tokens
+			this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
+			this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
+			this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
 
-		# do we make a snapshot?
-		# this is only possible if we have a rendered movie
-		if (config.create_snapshot):
-			logger.info("Creating snapshot")
-			snapshot = this_script.render_snapshot()
-			snapshot_name = snapshot[0]
-			snapshot_script = snapshot[1]
-			snapshot_local_path = "{0}/{1}".format(local_output, snapshot_name)
-			
-			# actually execute the command
-			result = os.system(snapshot_script)
-			if (result != 0):
-				logger.error("Snapshot render command failed :: {0}".format(snapshot_script))
-			
-			# upload the results ?
-			if (len(config.s3_destination) > 0 and running_locally == False):
-				upload_path = swap_tokens(tokens, data_row, config.s3_destination)
-				upload_path = "{0}/{1}".format(upload_path, snapshot_name)
-				logger.info("Uploading snapshot to :: {0}".format(upload_path))
-				if (not upload_file_to_S3(snapshot_local_path, upload_path, True)):
-					logger.error("Failed to upload snapshot to :: {0}".format(upload_path))
-					
-		# clean up movies and snapshots?
-		if (len(config.s3_destination) > 0 and running_locally == False):
-			logger.info("Cleaning up local movie and snapshot files")
-			
+			# swap tokens for data in the template
+			for text_object in this_script.text_objects:
+				text_object.font.file = re.sub(CWD_TOKEN, cwd, text_object.font.file)
+				text_object.content = swap_tokens(tokens, data_row, text_object.content)
+
+			movies = this_script.render_movies()
+
+			# run the command
+			logger.info("Rendering {0} movies".format(len(movies)))
 			for movie in movies:
-				movie_name = "{0}/{1}".format(local_output , movie[0])
-				# and delete the local if we're uploading
-				logger.info("Deleting local movie :: {0}".format(movie_name))
-				if (os.path.exists(movie_name)):
-					os.remove(movie_name)
+
+				movie_name = movie[0]
+				movie_script = movie[1]
 				
-			if (os.path.exists(snapshot_local_path) and config.create_snapshot):
-				logger.info("Deleting local snapshot :: {0}".format(snapshot_local_path))
-				os.remove(snapshot_local_path)
+				# actually execute the command
+				result = os.system(movie_script)
+				if (result != 0):
+					logger.error("Movie render command failed :: {0}".format(movie_script))
+				
+				# upload the results ?
+				if (len(config.s3_destination) > 0 and running_locally == False):
+					upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+					upload_path = "{0}/{1}".format(upload_path, movie_name)
+					logger.info("Uploading movie to :: {0}".format(upload_path))
+					if (not upload_file_to_S3("{0}/{1}".format(local_output, movie_name), upload_path, True)):
+						logger.error("Failed to upload movie to :: {0}".format(upload_path))
 
-	if (config.create_html):
-		logger.info("Creating html")
-		html_output_name = swap_tokens_html(tokens, data_row, config.html_output_file)
-		this_html_template = swap_tokens_html(tokens, data_row, html_template)
-		html_local_destination = "{0}/{1}".format(local_output, html_output_name)
-		# clean up first to be super sure we don't ever upload the wrong personalised file for someone
-		if (os.path.exists(html_local_destination)):
-			os.remove(html_local_destination)
-		
-		# write the transformed template back out
-		with open(html_local_destination, "w") as f:
-			f.write(this_html_template)
-
-		# upload to s3?
-		if (len(config.s3_destination) > 0 and running_locally == False):
-			upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
-			upload_path = "{0}/{1}".format(upload_path, html_output_name)
-			logger.info("Uploading html to :: {0}".format(upload_path))
-			if (not upload_file_to_S3(html_local_destination, upload_path, True)):
-				logger.error("Failed to upload html to :: {0}".format(upload_path))
+			# do we make a snapshot?
+			# this is only possible if we have a rendered movie
+			if (config.create_snapshot):
+				logger.info("Creating snapshot")
+				snapshot = this_script.render_snapshot()
+				snapshot_name = snapshot[0]
+				snapshot_script = snapshot[1]
+				snapshot_local_path = "{0}/{1}".format(local_output, snapshot_name)
+				
+				# actually execute the command
+				result = os.system(snapshot_script)
+				if (result != 0):
+					logger.error("Snapshot render command failed :: {0}".format(snapshot_script))
+				
+				# upload the results ?
+				if (len(config.s3_destination) > 0 and running_locally == False):
+					upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+					upload_path = "{0}/{1}".format(upload_path, snapshot_name)
+					logger.info("Uploading snapshot to :: {0}".format(upload_path))
+					if (not upload_file_to_S3(snapshot_local_path, upload_path, True)):
+						logger.error("Failed to upload snapshot to :: {0}".format(upload_path))
+						
+			# clean up movies and snapshots?
+			if (len(config.s3_destination) > 0 and running_locally == False):
+				logger.info("Cleaning up local movie and snapshot files")
+				
+				for movie in movies:
+					movie_name = "{0}/{1}".format(local_output , movie[0])
+					# and delete the local if we're uploading
+					logger.info("Deleting local movie :: {0}".format(movie_name))
+					if (os.path.exists(movie_name)):
+						os.remove(movie_name)
 					
-			# delete local copy?
+				if (os.path.exists(snapshot_local_path) and config.create_snapshot):
+					logger.info("Deleting local snapshot :: {0}".format(snapshot_local_path))
+					os.remove(snapshot_local_path)
+
+		if (config.create_html):
+			logger.info("Creating html")
+			html_output_name = swap_tokens_html(tokens, data_row, config.html_output_file)
+			this_html_template = swap_tokens_html(tokens, data_row, html_template)
+			html_local_destination = "{0}/{1}".format(local_output, html_output_name)
+			# clean up first to be super sure we don't ever upload the wrong personalised file for someone
 			if (os.path.exists(html_local_destination)):
 				os.remove(html_local_destination)
+			
+			# write the transformed template back out
+			with open(html_local_destination, "w") as f:
+				f.write(this_html_template)
 
-	# iframe template?
-	if (config.create_html and len(config.iframe_output_file) > 0):
+			# upload to s3?
+			if (len(config.s3_destination) > 0 and running_locally == False):
+				upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
+				upload_path = "{0}/{1}".format(upload_path, html_output_name)
+				logger.info("Uploading html to :: {0}".format(upload_path))
+				if (not upload_file_to_S3(html_local_destination, upload_path, True)):
+					logger.error("Failed to upload html to :: {0}".format(upload_path))
+						
+				# delete local copy?
+				if (os.path.exists(html_local_destination)):
+					os.remove(html_local_destination)
 
-		logger.info("Creating iframe html")
-		iframe_output_name = swap_tokens_html(tokens, data_row, config.iframe_output_file)
-		this_iframe_template = swap_tokens_html(tokens, data_row, iframe_template)
-		iframe_local_destination = "{0}/{1}".format(local_output, iframe_output_name)
-		# clean up first to be super sure we don't ever upload the wrong personalised file for someone
-		if (os.path.exists(iframe_local_destination)):
-			os.remove(iframe_local_destination)
-		
-		# write the transformed template back out
-		with open(iframe_local_destination, "w") as f:
-			f.write(this_iframe_template)
+		# iframe template?
+		if (config.create_html and len(config.iframe_output_file) > 0):
 
-		# upload to s3?
-		if (len(config.s3_destination) > 0 and running_locally == False):
-			upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
-			upload_path = "{0}/{1}".format(upload_path, iframe_output_name)
-			logger.info("Uploading iframe to :: {0}".format(upload_path))
-			if (not upload_file_to_S3(iframe_local_destination, upload_path, True)):
-				logger.error("Failed to upload iframe to :: {0}".format(upload_path))
-
-			# delete local copy?
+			logger.info("Creating iframe html")
+			iframe_output_name = swap_tokens_html(tokens, data_row, config.iframe_output_file)
+			this_iframe_template = swap_tokens_html(tokens, data_row, iframe_template)
+			iframe_local_destination = "{0}/{1}".format(local_output, iframe_output_name)
+			# clean up first to be super sure we don't ever upload the wrong personalised file for someone
 			if (os.path.exists(iframe_local_destination)):
 				os.remove(iframe_local_destination)
+			
+			# write the transformed template back out
+			with open(iframe_local_destination, "w") as f:
+				f.write(this_iframe_template)
 
+			# upload to s3?
+			if (len(config.s3_destination) > 0 and running_locally == False):
+				upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
+				upload_path = "{0}/{1}".format(upload_path, iframe_output_name)
+				logger.info("Uploading iframe to :: {0}".format(upload_path))
+				if (not upload_file_to_S3(iframe_local_destination, upload_path, True)):
+					logger.error("Failed to upload iframe to :: {0}".format(upload_path))
+
+				# delete local copy?
+				if (os.path.exists(iframe_local_destination)):
+					os.remove(iframe_local_destination)
+	except Exception as e:
+		logger.error("Failed to process row :: {}".format(e.message))
 		
 if (not running_locally):
 	log_file_path = "{0}/{1}".format(config.s3_logs, log_file)

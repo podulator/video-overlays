@@ -31,6 +31,7 @@ class DrawText(Renderable):
 		mycontent = re.sub(':', '\\:', mycontent)
 		mycontent = re.sub(';', '\\;', mycontent)
 		mycontent = re.sub('!', '\\!', mycontent)
+		mycontent = re.sub('"', '\\"', mycontent)
 		mycontent = re.sub('\.', '\\.', mycontent)
 		mycontent = re.sub('`', '\\`', mycontent)
 		mycontent = re.sub('\'', u'’', mycontent)
@@ -137,6 +138,14 @@ class DrawText(Renderable):
 		self._line_max_length = value
 
 	@property
+	def vertical_padding(self):
+		return self._vertical_padding
+	
+	@vertical_padding.setter
+	def vertical_padding(self, value):
+		self._vertical_padding = value
+
+	@property
 	def x(self):
 		return self._x
 	
@@ -211,6 +220,8 @@ class DrawText(Renderable):
 			self.content_max_length = data["_content_max_length"]
 		if ("_line_max_length" in data):
 			self.line_max_length = data["_line_max_length"]
+		if ("_vertical_padding" in data):
+			self.vertical_padding = data["_vertical_padding"]
 
 		if ("_frame_from" in data):
 			self.frame_from = data["_frame_from"]
@@ -254,6 +265,7 @@ class DrawText(Renderable):
 		self.clean_content = False
 		self.content_max_length = 0
 		self.line_max_length = 0
+		self._vertical_padding = "(text_h/5)"
 
 		# origin is top left
 		self.x = 0

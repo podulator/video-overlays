@@ -28,8 +28,8 @@ class DrawText(Renderable):
 	def fix_line_length(self):
 		return '\n'.join(textwrap.wrap(self._content, self._line_max_length))
 
-	def fix_content_length(self):
-		return (self._content[:self._content_max_length - 3] + '...') if len(self._content) > self._content_max_length else self._content
+	def fix_content_length(self, content, max_length):
+		return (content[:max_length - 3] + '...') if len(content) > max_length else content
 
 	def scrub(self, content):
 		# grab dirty content and do a fault tolerant clean
@@ -77,9 +77,8 @@ class DrawText(Renderable):
 				self.content = self.scrub(self.content)
 				#print "content cleaned to {0}".format(self._content)
 			if (self._content_max_length > 0 and self._content_max_length < len(self.content)):
-				self.content = self.fix_content_length()
+				self.content = self.fix_content_length(self.content, self._content_max_length)
 				#print "content shortened to {0} because longer than {1}".format(self._content, self._content_max_length)
-
 		self._content_dirty = False
 
 		border = ""
@@ -96,17 +95,18 @@ class DrawText(Renderable):
 		
 		all_x = self.render_x()
 		all_y = self.render_y()
+
 		results = []
 		for index, line in enumerate(lines):
-			#print "processing line - index :: {0} - {1}".format(line, index)
+			#print "processing line - index :: '{0}' - {1}".format(line, index)
 			if (index == 0):
 				current_y = all_y
 			else:
-				current_y = "{0}+({1}*text_h)+({1}*{2})".format(all_y, index, self.vertical_padding)
-				
+				current_y = "({0}+({1}*{2})+({1}*{3}))".format(all_y, index, self.font.size, self.vertical_padding)
+
 			#print "current-y == {0}".format(current_y)
 			body = "text='{0}': x={1}: y={2}: alpha={3}{4}{5}".format(   
-																	line, 
+																	line.strip(), 
 																	all_x, 
 																	current_y, 
 																	self.alpha, 
@@ -294,7 +294,7 @@ class DrawText(Renderable):
 		self.clean_content = False
 		self.content_max_length = 0
 		self.line_max_length = 0
-		self._vertical_padding = "text_h/5"
+		self._vertical_padding = 20
 
 		# origin is top left
 		self.x = 0

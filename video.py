@@ -353,6 +353,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				if (len(config.s3_destination) > 0 and running_locally == False):
 					upload_path = swap_tokens(tokens, data_row, config.s3_destination)
 					upload_path = "{0}/{1}".format(upload_path, movie_name)
+					upload_path = upload_path.lower()
 					logger.info("Uploading movie to :: {0}".format(upload_path))
 					if (not upload_file_to_S3("{0}/{1}".format(local_output, movie_name), upload_path, True)):
 						logger.error("Failed to upload movie to :: {0}".format(upload_path))
@@ -375,6 +376,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				if (len(config.s3_destination) > 0 and running_locally == False):
 					upload_path = swap_tokens(tokens, data_row, config.s3_destination)
 					upload_path = "{0}/{1}".format(upload_path, snapshot_name)
+					upload_path = upload_path.lower()
 					logger.info("Uploading snapshot to :: {0}".format(upload_path))
 					if (not upload_file_to_S3(snapshot_local_path, upload_path, True)):
 						logger.error("Failed to upload snapshot to :: {0}".format(upload_path))
@@ -411,10 +413,11 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
 				upload_path = "{0}/{1}".format(upload_path, html_output_name)
+				upload_path = upload_path.lower()
 				logger.info("Uploading html to :: {0}".format(upload_path))
 				if (not upload_file_to_S3(html_local_destination, upload_path, True)):
 					logger.error("Failed to upload html to :: {0}".format(upload_path))
-						
+
 				# delete local copy?
 				if (os.path.exists(html_local_destination)):
 					os.remove(html_local_destination)
@@ -438,6 +441,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			if (len(config.s3_destination) > 0 and running_locally == False):
 				upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
 				upload_path = "{0}/{1}".format(upload_path, iframe_output_name)
+				upload_path = upload_path.lower()
 				logger.info("Uploading iframe to :: {0}".format(upload_path))
 				if (not upload_file_to_S3(iframe_local_destination, upload_path, True)):
 					logger.error("Failed to upload iframe to :: {0}".format(upload_path))

@@ -1,0 +1,19 @@
+{
+	"_create_html": true,
+	"_create_movie": true, 
+	"_create_snapshot": true, 
+    "_data_file": "startline-female-4.csv", 
+    "_data_definition_file": "data.definition", 
+    "_data_has_headers": true, 
+    "_data_seperator": "|", 
+    "_html_output_file": "startline.html", 
+    "_html_template": "template-startline.html", 
+    "_iframe_template": "iframe-template-startline.html", 
+    "_iframe_output_file": "startline-embedded.html", 
+    "_max_rows": 0, 
+    "_s3_destination": "poweredbypeople.justgiving.com/%_PageShortName_%", 
+    "_s3_materials": "poweredbypeople-config-prod-justgiving-com/materials", 
+    "_s3_logs": "poweredbypeople-config-prod-justgiving-com/logs", 
+    "_script_file": "template.json", 
+    "_terminate_on_completion": true
+}

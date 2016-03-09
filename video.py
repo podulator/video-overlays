@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # requires 
 # apt-get install ffmpeg python python-urllib3, python-pip
@@ -148,11 +149,29 @@ def swap_tokens(tokens, data_row, content):
 		logger.debug(u"Looking for tokens in :: {0}".format(content))
 	for token_counter, token in enumerate(tokens):
 		if (None != re.search(token, content)):
+			data = data_row[token_counter].decode("ISO-8859-1", "ignore")
+			try:
+				logger.debug("swapping out token :: {0} for data :: '{1}'".format(token, data))
+			except UnicodeEncodeError:
+				logger.debug(u"swapping out token :: {0} for data :: '{1}'".format(token, data))
+			#content = content.replace(token, data)
+			content = re.sub(token, data, content)
+
+	return content
+
+def swap_tokens_html(tokens, data_row, content):
+	try:
+		logger.debug("Looking for tokens in :: {0}".format(content))
+	except UnicodeEncodeError:
+		logger.debug(u"Looking for tokens in :: {0}".format(content))
+	for token_counter, token in enumerate(tokens):
+		if (None != re.search(token, content)):
 			data = data_row[token_counter]
 			try:
 				logger.debug("swapping out token :: {0} for data :: '{1}'".format(token, data))
 			except UnicodeEncodeError:
 				logger.debug(u"swapping out token :: {0} for data :: '{1}'".format(token, data))
+			#content = content.replace(token, data)
 			content = re.sub(token, data, content)
 
 	return content
@@ -376,8 +395,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 
 	if (config.create_html):
 		logger.info("Creating html")
-		html_output_name = swap_tokens(tokens, data_row, config.html_output_file)
-		this_html_template = swap_tokens(tokens, data_row, html_template)
+		html_output_name = swap_tokens_html(tokens, data_row, config.html_output_file)
+		this_html_template = swap_tokens_html(tokens, data_row, html_template)
 		html_local_destination = "{0}/{1}".format(local_output, html_output_name)
 		# clean up first to be super sure we don't ever upload the wrong personalised file for someone
 		if (os.path.exists(html_local_destination)):
@@ -389,7 +408,7 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 
 		# upload to s3?
 		if (len(config.s3_destination) > 0 and running_locally == False):
-			upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+			upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
 			upload_path = "{0}/{1}".format(upload_path, html_output_name)
 			logger.info("Uploading html to :: {0}".format(upload_path))
 			if (not upload_file_to_S3(html_local_destination, upload_path, True)):
@@ -403,8 +422,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 	if (config.create_html and len(config.iframe_output_file) > 0):
 
 		logger.info("Creating iframe html")
-		iframe_output_name = swap_tokens(tokens, data_row, config.iframe_output_file)
-		this_iframe_template = swap_tokens(tokens, data_row, iframe_template)
+		iframe_output_name = swap_tokens_html(tokens, data_row, config.iframe_output_file)
+		this_iframe_template = swap_tokens_html(tokens, data_row, iframe_template)
 		iframe_local_destination = "{0}/{1}".format(local_output, iframe_output_name)
 		# clean up first to be super sure we don't ever upload the wrong personalised file for someone
 		if (os.path.exists(iframe_local_destination)):
@@ -416,12 +435,12 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 
 		# upload to s3?
 		if (len(config.s3_destination) > 0 and running_locally == False):
-			upload_path = swap_tokens(tokens, data_row, config.s3_destination)
+			upload_path = swap_tokens_html(tokens, data_row, config.s3_destination)
 			upload_path = "{0}/{1}".format(upload_path, iframe_output_name)
 			logger.info("Uploading iframe to :: {0}".format(upload_path))
 			if (not upload_file_to_S3(iframe_local_destination, upload_path, True)):
 				logger.error("Failed to upload iframe to :: {0}".format(upload_path))
-					
+
 			# delete local copy?
 			if (os.path.exists(iframe_local_destination)):
 				os.remove(iframe_local_destination)

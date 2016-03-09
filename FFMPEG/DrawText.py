@@ -201,25 +201,41 @@ class DrawText(Renderable):
 
 	def from_JSON(self, data):
 
-		self.content = data["_content"]
-		self.fallback_content = data["_fallback_content"]
-		self.clean_content = data["_clean_content"]
-		self.content_max_length = data["_content_max_length"]
-		self.line_max_length = data["_line_max_length"]
+		if ("_content" in data):
+			self.content = data["_content"]
+		if ("_fallback_content" in data):
+			self.fallback_content = data["_fallback_content"]
+		if ("_clean_content" in data):
+			self.clean_content = data["_clean_content"]
+		if ("_content_max_length" in data):
+			self.content_max_length = data["_content_max_length"]
+		if ("_line_max_length" in data):
+			self.line_max_length = data["_line_max_length"]
 
-		self.frame_from = data["_frame_from"]
-		self.frame_to = data["_frame_to"]
+		if ("_frame_from" in data):
+			self.frame_from = data["_frame_from"]
+		if ("_frame_to" in data):
+			self.frame_to = data["_frame_to"]
 		
-		self.x = data["_x"]
-		self.y = data["_y"]
-		self.alpha = data["_alpha"]
-		self.border_width = data["_border_width"]
-		self.border_colour = data["_border_colour"]
-		self.fix_bounds = data["_fix_bounds"]
+		if ("_x" in data):
+			self.x = data["_x"]
+		if ("_y" in data):
+			self.y = data["_y"]
+		if ("_alpha" in data):
+			self.alpha = data["_alpha"]
+		if ("_border_width" in data):
+			self.border_width = data["_border_width"]
+		if ("_border_colour" in data):
+			self.border_colour = data["_border_colour"]
+		if ("_fix_bounds" in data):
+			self.fix_bounds = data["_fix_bounds"]
 
-		self._box.from_JSON(data["_box"])
-		self._font.from_JSON(data["_font"])
-		self._drop_shadow.from_JSON(data["_drop_shadow"])
+		if ("_box" in data):
+			self._box.from_JSON(data["_box"])
+		if ("_font" in data):
+			self._font.from_JSON(data["_font"])
+		if ("_drop_shadow" in data):
+			self._drop_shadow.from_JSON(data["_drop_shadow"])
 
 	def isfloat(value):
 		try:

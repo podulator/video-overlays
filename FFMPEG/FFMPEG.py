@@ -19,14 +19,6 @@ class FFMPEG(object):
 	def output_path_prefix(self, value):
 		self._output_path_prefix = value
 
-	@property
-	def source_movie(self):
-		return self._source_movie
-
-	@source_movie.setter
-	def source_movie(self, value):
-		self._source_movie = value
-
 	@property 
 	def input_flags(self):
 		return self._input_flags
@@ -74,8 +66,6 @@ class FFMPEG(object):
 	def render_movies(self):
 
 		results = []
-		
-		inputs = "{0} -y -i \"{1}\" {2} \\\n".format(self.FFMPEG_PATH, self._source_movie, self._input_flags)
 
 		# make the filters up
 		filter_objects = self._text_objects + self._image_objects
@@ -83,6 +73,7 @@ class FFMPEG(object):
 		filters = "-vf \\\n{0} \\\n".format(filter_objects)
 		
 		for encoder in self._output_encoders:
+			inputs = "{0} -y -i \"{1}\" {2} \\\n".format(self.FFMPEG_PATH, encoder._source_movie, self._input_flags)
 			movie_name = "{}.{}".format(self._destination_movie, encoder.extension)
 			outputs = "{0} \"{1}/{2}\"".format(encoder.flags, self._output_path_prefix, movie_name)
 			payload = "{0}{1}{2}".format(inputs, filters, outputs)
@@ -103,9 +94,6 @@ class FFMPEG(object):
 		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 	def from_JSON(self, data):
-
-		if ("_source_movie" in data):
-			self.source_movie = data["_source_movie"]
 		
 		if ("_destination_movie" in data):
 			self.destination_movie = data["_destination_movie"]
@@ -140,9 +128,8 @@ class FFMPEG(object):
 				encoder.from_JSON(encoder_object)
 				self._output_encoders.append(encoder)
 
-	def __init__(self, source = "", destination = ""):
-		
-		self._source_movie = source
+	def __init__(self, destination = ""):
+
 		self._destination_movie = destination
 		self._snapshot_timestamp = ""
 		self._snapshot_name = ""

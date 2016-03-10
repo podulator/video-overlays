@@ -3,6 +3,14 @@ import json
 class Encoder(object):
 
 	@property
+	def source_movie(self):
+		return self._source_movie
+
+	@source_movie.setter
+	def source_movie(self, value):
+		self._source_movie = value
+
+	@property
 	def extension(self):
 		return self._extension
 	
@@ -24,8 +32,10 @@ class Encoder(object):
 	def from_JSON(self, data):
 		self.extension = data["_extension"]
 		self._flags = data["_flags"]
-
-	def __init__(self, extension = "", flags = ""):
+		self.source_movie = data["_source_movie"]
+			
+	def __init__(self, source = "", extension = "", flags = ""):
+		self._source_movie = source
 		self._extension = extension
 		self._flags = flags
 

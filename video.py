@@ -326,7 +326,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
 						
 			# fix input output paths possibly containing tokens
-			this_script.source_movie = swap_tokens(tokens, data_row, this_script.source_movie)
+			for encoder in this_script.output_encoders:
+				encoder._source_movie = swap_tokens(tokens, data_row, encoder._source_movie)
 			this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
 			this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
 

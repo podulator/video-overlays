@@ -48,7 +48,7 @@ class DrawText(Renderable):
 		mycontent = re.sub('\.', '\\.', mycontent)
 		mycontent = re.sub('`', '\\`', mycontent)
 		mycontent = re.sub('\'', u'’', mycontent)
-		return mycontent.encode("ISO-8859-1", "ignore")
+		return mycontent.encode("utf8", "ignore")
 
 	def render_x(self):
 		my_x = str(self._x)

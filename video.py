@@ -149,7 +149,7 @@ def swap_tokens(tokens, data_row, content):
 		logger.debug(u"Looking for tokens in :: {0}".format(content))
 	for token_counter, token in enumerate(tokens):
 		if (None != re.search(token, content)):
-			data = data_row[token_counter].decode("ISO-8859-1", "ignore")
+			data = data_row[token_counter].decode("utf8", "ignore")
 			try:
 				logger.debug("swapping out token :: {0} for data :: '{1}'".format(token, data))
 			except UnicodeEncodeError:

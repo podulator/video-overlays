@@ -20,6 +20,7 @@ from FFMPEG import DrawText
 from FFMPEG import FFMPEG
 from Config import Config
 import ssl
+import traceback
 
 # workaround buckets with periods in their name
 if hasattr(ssl, '_create_unverified_context'):
@@ -323,12 +324,13 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 			this_script.output_path_prefix = local_output
 			
 			# we need to work out paths and filenames  for html even if we don't render the movie
-			logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.output_encoders) ) ) ) )
-						
+			logger.debug("Creating movies of type :: {0}".format(", ".join( map( str, (this_script.encoders) ) ) ) )
+
 			# fix input output paths possibly containing tokens
-			for encoder in this_script.output_encoders:
-				encoder._source_movie = swap_tokens(tokens, data_row, encoder._source_movie)
-			this_script.destination_movie = swap_tokens(tokens, data_row, this_script.destination_movie)
+			for encoder in this_script.encoders:
+				encoder.source.name = swap_tokens(tokens, data_row, encoder.source.name)
+				encoder.destination.name = swap_tokens(tokens, data_row, encoder.destination.name)
+
 			this_script.snapshot_name = swap_tokens(tokens, data_row, this_script.snapshot_name)
 
 			# swap tokens for data in the template
@@ -345,6 +347,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				movie_name = movie[0]
 				movie_script = movie[1]
 				
+				logger.info("Rendering :: {0}".format(movie_name))
+
 				# actually execute the command
 				result = os.system(movie_script)
 				if (result != 0):
@@ -451,7 +455,8 @@ for row_counter, data_row in enumerate(CsvDataIterator(data_file)):
 				if (os.path.exists(iframe_local_destination)):
 					os.remove(iframe_local_destination)
 	except Exception as e:
-		logger.error("Failed to process row :: {}".format(e.message))
+		logger.error(traceback.format_exc())
+		#logger.error("Failed to process row :: {}".format(e.stack_trace))
 		
 if (not running_locally):
 	log_file_path = "{0}/{1}".format(config.s3_logs, log_file)

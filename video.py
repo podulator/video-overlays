@@ -253,13 +253,17 @@ try:
 		for item in bucket_list:
 			remote_key = str(item.key)
 			local_path = "{0}/{1}".format(local_materials, remote_key[remote_path_root_length:])
-			logger.info("Downloading {0} to {1}".format(remote_key, local_path))
-			try:
-				item.get_contents_to_filename(local_path)
-			except OSError:
-				if not os.path.exists(local_path):
-					logger.info("Creating local folder :: {0}".format(local_path))
-					os.mkdir(local_path)
+			if (not os.path.isfile(local_path)):
+				logger.info("Downloading {0} to {1}".format(remote_key, local_path))
+				try:
+					item.get_contents_to_filename(local_path)
+				except OSError:
+					if not os.path.exists(local_path):
+						logger.info("Creating local folder :: {0}".format(local_path))
+						os.mkdir(local_path)
+			else:
+				logger.info("Skipping existing file :: {0}".format(local_path))
+
 		logger.info("All materials downloaded")
 
 	else:
